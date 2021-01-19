@@ -51,10 +51,10 @@
 				<div class="wrap-login100 p-t-85 p-b-20">
 					<form id="userform">
 						<span class="login100-form-title p-b-70">
-							<h5>Netty 实战</h5>
+							<h5>回聊</h5>
 						</span>
 						<span class="login100-form-avatar">
-							<img id="img_login_face" src="css/registLogin/arrow.jpg" alt="回聊">
+							<img id="img_login_face" src="./static/image/gouzi.png" alt="回聊">
 						</span>
 
 						<div class="wrap-input100 validate-input m-t-85 m-b-35">
@@ -66,13 +66,13 @@
 							<input class="input100" type="password" id="password" name="password" placeholder="密码">
 							<span class="focus-input100"></span>
 						</div>
-						<div class="container-login100-form-btn">
-							<button type="submit" id="Login" class="login100-form-btn">
-								登录
-							</button>
-						</div>
 					</form>
-					
+					<button id="loginButton" class="login100-form-btn" style="margin-bottom: 10px;">
+						登录
+					</button>
+					<button  id="registerButton" class="login100-form-btn">
+						注册
+					</button>	
 				</div>
 			</div>
 		</div>
@@ -80,22 +80,33 @@
 		<script type="text/javascript" src="js/appConfig.js" ></script>
 		<script type="text/javascript">
 			
+			
+			
 			mui.plusReady(function(){
+				
+				//如果进程被kill掉，重新打开app加载上次的登录用户的信息，并跳转到聊天页面
+				utils.reLoginByStorage();
+				
 				var userform = document.getElementById("userform");
 				var username = document.getElementById("username");
 				var password = document.getElementById("password");
+				var registerButton = document.getElementById("registerButton");
+				var loginButton = document.getElementById("loginButton");
+				var cid = plus.push.getClientInfo().clientid;//  获得当前登录设备的id
 				
-				//  获得当前登录设备的id
-				var cid = plus.push.getClientInfo().clientid;
+				registerButton.addEventListener("tap",function (e) {
+				  console.log("tap event trigger");
+				});
 				
-				userform.addEventListener("submit",function(e){
+				loginButton.addEventListener("tap",function(e){
+					
 					if(utils.isNull(username.value)){
 						utils.popUpToast("账号不能为空！")
-						username.focus();	
+						// username.focus();	
 					}else{
 						if(utils.isNull(password.value)){
 							utils.popUpToast("密码不能为空！")
-							password.focus();
+							// password.focus();
 						}
 					}
 					
@@ -108,6 +119,7 @@
 							return false;
 						}
 					}
+
 					
 					//调用后端接口
 					mui.ajax(appConfig.serviceUrl+"/user/login",{
@@ -119,13 +131,20 @@
 						type:'post',//HTTP请求类型
 						timeout:10000,//超时时间设置为10秒；
 						headers:{'Content-Type':'application/json'},	              
-						success:function(data){
-							console.log(JSON.stringify(data));
+						success:function(resp){
+							
+							if(resp.code=="0"){
+								utils.setCurrentUser(resp.data.currentUser);//将当前登录用户缓存起来
+								mui.openWindow("index.html");
+							}
+							else{
+								console.log("登录失败，状态码为："+resp.code)
+							}
+							
+							
 						}
 					});
 					
-					
-				
 					
 					//使原来form表单的提交失效
 					e.preventDefault();

@@ -8,9 +8,9 @@
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<link rel="stylesheet" href="css/header.css" />
 		<script type="text/javascript" charset="utf-8">
+			//初始化设置，设置导航栏的主题还有背景
 			mui.init();
-			mui.ready(function() {
-
+			mui.plusReady(function() {
 				plus.navigator.setStatusBarStyle("light");
 				plus.navigator.setStatusBarBackground("#c9394a");
 
@@ -67,6 +67,11 @@
 			}
 
 			mui.plusReady(function() {
+				
+				//重写手机的返回，禁用返回
+				mui.back = function(){
+					return false;
+				}				
 				//应用界面管理对象
 				var indexWebview = plus.webview.currentWebview();
 

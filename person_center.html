@@ -9,10 +9,92 @@
 	</head>
 
 	<body>
-		<h1> 个人中心</h1>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
+						style="line-height: 50px;color: lightgray;margin-right: 3px;"></span>
+						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;" src="static/image/likunzhu.jpg">
+						<div class="mui-media-body" style="line-height: 50px;font-size: 16px;">
+							头像	
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright"
+						style="color: lightgray;margin-right: 3px;"></span>
+						<span id="my_nickname" class="mui-pull-right" 
+						style="font-size: 14px;color: gray;">likunzhu</span>
+						<div class="mui-media-body" style="font-size: 16px;">
+							昵称
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						
+						<span id="my_username" class="mui-pull-right" style="font-size: 14px;color: gray;margin-right: 10px;">490972983</span>
+						<div class="mui-media-body" style="font-size: 16px;">
+							我的账号
+						</div>
+					</a>	
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
+						style="color: lightgray;margin-right: 3px;"></span>
+						<img id="my_qrcode" class="mui-media-object mui-pull-right"style="max-width: 30px;max-height: 30px;"  src="static/image/qrcode_logo.png">
+						<div class="mui-media-body" style="font-size: 16px;line-height: 35px;">
+							扫一扫加我为好友
+						</div>
+					</a>
+				</li>
+			</ul>
+			<br />
+			
+			<ul class="mui-table-view"> 
+				<li class="mui-table-view-cell mui-media" style="text-align: center;">
+					<a href="javascript:;">
+						<div id="login_out" class="mui-media-body" style="font-size: 16px;">
+							退出登录
+						</div>
+					</a>
+				</li>
+			</ul>
+			
+		</div>
+		
 		<script src="js/mui.js"></script>
+		<script src="js/utils.js"></script>
 		<script type="text/javascript">
 			mui.init()
+			
+			mui.plusReady(function () {
+				
+				//刷新用户中心页面的值,当切换到用户中心界面时触发
+				var personCenterWebView=plus.webview.currentWebview();
+				personCenterWebView.addEventListener("show",function(){
+					refreshUserInfo()
+				})
+			
+				//退出登录
+				login_out.addEventListener("tap",function(){
+					utils.logOut();
+				})
+			
+			});
+			
+			function refreshUserInfo(){
+				var currentUser = utils.getCurrentUser();
+				var my_face_img = document.getElementById("my_face_img");
+				var my_nickname = document.getElementById("my_nickname");
+				var my_username = document.getElementById("my_username");
+				console.log(JSON.stringify(currentUser));
+				my_nickname.innerHTML = currentUser.nickname;
+				my_nickname.innerHTML = currentUser.username;
+			};
 		</script>
 	</body>
 
