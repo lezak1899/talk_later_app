@@ -12,7 +12,7 @@
 		<div class="mui-content">
 			<ul class="mui-table-view">
 				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
+					<a id="link_face_img" href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 						style="line-height: 50px;color: lightgray;margin-right: 3px;"></span>
 						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;" src="static/image/likunzhu.jpg">
@@ -22,7 +22,7 @@
 					</a>
 				</li>
 				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
+					<a  href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright"
 						style="color: lightgray;margin-right: 3px;"></span>
 						<span id="my_nickname" class="mui-pull-right" 
@@ -73,6 +73,11 @@
 			
 			mui.plusReady(function () {
 				
+				var link_face_img = document.getElementById("link_face_img");
+				link_face_img.addEventListener("tap",function(){
+					mui.openWindow("face_image.html");
+				})
+				
 				//刷新用户中心页面的值,当切换到用户中心界面时触发
 				var personCenterWebView=plus.webview.currentWebview();
 				personCenterWebView.addEventListener("show",function(){
@@ -82,7 +87,7 @@
 				//退出登录
 				login_out.addEventListener("tap",function(){
 					utils.logOut();
-				})
+				}) 
 			
 			});
 			
@@ -93,7 +98,11 @@
 				var my_username = document.getElementById("my_username");
 				console.log(JSON.stringify(currentUser));
 				my_nickname.innerHTML = currentUser.nickname;
-				my_nickname.innerHTML = currentUser.username;
+				my_username.innerHTML = currentUser.username;
+				if(utils.isNotNull(currentUser.faceImg)){
+					my_face_img.src=appConfig.imgServiceUrl+currentUser.faceImg;
+				}
+				
 			};
 		</script>
 	</body>
