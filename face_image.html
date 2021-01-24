@@ -6,13 +6,94 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/header.css" />
 	</head>
 
 	<body>
-		<h1>头像</h1>
+		<header class="mui-bar mui-bar-nav title-color">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<a id="my_face_operation" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: white;">…</a>
+			<h1 class="mui-title" style="color: white;">我的头像</h1>
+		</header>
+		
+		<div class="mui-content">
+			<img id="img_myface" src="static/image/gouzi.png" />
+		</div>
+		
+		<div id="my_face_img_sheet" class="mui-popover mui-popover-bottom mui-popover-action" >
+			<!-- 可选择菜单 -->
+			<ul class="mui-table-view">
+			  <li class="mui-table-view-cell">
+				<a id="upload_img" href="#">上传图片</a>
+			  </li>
+			  <li class="mui-table-view-cell">
+				<a id="download_img" href="#">下载图片</a>
+			  </li>
+			</ul>
+			<!-- 取消菜单 -->
+			<ul class="mui-table-view">
+			  <li class="mui-table-view-cell">
+				<a href="#sheet1"><b>取消</b></a>
+			  </li>
+			</ul>
+		</div>
+		
+		
+		
 		<script src="js/mui.js"></script>
+		<script type="text/javascript" src="js/utils.js" ></script>
+		<script type="text/javascript" src="js/appConfig.js" ></script>
 		<script type="text/javascript">
 			mui.init()
+			mui.plusReady(function(){
+				var img_myface = document.getElementById("img_myface");
+				var  my_face_operation = document.getElementById("my_face_operation");
+				var upload_img =  document.getElementById("upload_img");
+				var download_img= document.getElementById("download_img");
+				var currentUser=utils.getCurrentUser();
+				console.log(JSON.stringify(currentUser));
+				if(currentUser!=null){
+					var faceImg=currentUser.faceImg;
+					console.log(faceImg);
+					if(faceImg!=null){
+						// var faceImgUrl=appConfig.imgServiceUrl+faceImg;
+						img_myface.src=faceImg;
+						console.log("faceImg");
+					}
+					
+				}
+				var imgWidth=document.body.clientWidth;
+				img_myface.width = imgWidth;
+				img_myface.high = imgWidth;
+				
+				my_face_operation.addEventListener("tap",function(){
+					// mui("#my_face_img_sheet").popover("toggle");
+					
+					mui("#my_face_img_sheet").popover("toggle");
+				})
+				
+				upload_img.addEventListener("tap",function(){
+					
+					console.log("从相册中选择图片:");
+					plus.gallery.pick( function(path){
+						
+						img_myface.src=path;
+						alert(" 读取成功");
+					}, function ( e ) {
+						mui.openWindow("index.html", "index.html");
+					}, {filter:"image"} );
+					
+					// mui.openWindow("plugin/crop_tool/myface-uploader.html","myface-uploader.html");
+					mui("#my_face_img_sheet").popover("toggle");
+					
+				})
+				
+				download_img.addEventListener("tap",function(){
+					
+				})
+				
+				
+			})
 		</script>
 	</body>
 
