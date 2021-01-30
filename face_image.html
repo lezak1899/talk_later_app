@@ -17,7 +17,8 @@
 		</header>
 		
 		<div class="mui-content">
-			<img id="img_myface" src="static/image/gouzi.png" />
+			<img id="img_myface" src="./static/image/默认头像.png"/>
+			<canvas id='c'></canvas> 
 		</div>
 		
 		<div id="my_face_img_sheet" class="mui-popover mui-popover-bottom mui-popover-action" >
@@ -43,6 +44,8 @@
 		<script src="js/mui.js"></script>
 		<script type="text/javascript" src="js/utils.js" ></script>
 		<script type="text/javascript" src="js/appConfig.js" ></script>
+		<script type="text/javascript" src="js/cropper.js" ></script>
+		<script type="text/javascript" src="js/jquery-3.0.0.js" ></script>
 		<script type="text/javascript">
 			mui.init()
 			mui.plusReady(function(){
@@ -51,6 +54,7 @@
 				var upload_img =  document.getElementById("upload_img");
 				var download_img= document.getElementById("download_img");
 				var currentUser=utils.getCurrentUser();
+				var plusWidth=document.body.clientWidth; //获得设备屏幕的宽度
 				console.log(JSON.stringify(currentUser));
 				if(currentUser!=null){
 					var faceImg=currentUser.faceImg;
@@ -58,30 +62,64 @@
 					if(faceImg!=null){
 						// var faceImgUrl=appConfig.imgServiceUrl+faceImg;
 						img_myface.src=faceImg;
-						console.log("faceImg");
 					}
-					
 				}
-				var imgWidth=document.body.clientWidth;
+				//获得设备屏幕的宽度
+				var imgWidth=document.body.clientWidth; 
 				img_myface.width = imgWidth;
 				img_myface.high = imgWidth;
 				
+				//控制弹出框
 				my_face_operation.addEventListener("tap",function(){
-					// mui("#my_face_img_sheet").popover("toggle");
-					
 					mui("#my_face_img_sheet").popover("toggle");
 				})
 				
+				//从本地选择图片
 				upload_img.addEventListener("tap",function(){
-					
-					console.log("从相册中选择图片:");
 					plus.gallery.pick( function(path){
 						
-						img_myface.src=path;
-						alert(" 读取成功");
-					}, function ( e ) {
+						//新建一个img对象来接收选择的图片
+						var imgObj=document.createElement("img");
+						imgObj.src=path;
+						
+						//单图片加载完成后，才执行下面的代码，必须要用这句
+						imgObj.onload = ()=>{ 
+						//将原来的头像隐藏掉
+						img_myface.style.display="none";
+						var canvas = document.getElementById("c");
+						var context = canvas.getContext('2d');//指定了二维绘图
+						var width = imgObj.width;
+						var height= imgObj.height;
+						var index_x_start=0;
+						var index_y_start=0
+						var maxSize=0; //长边
+						var minSize=0;//短边
+						//护短解截取
+						if(height>=width){
+							minSize = width;
+							maxSize = height;
+							index_x_start=0;
+							index_y_start=(maxSize/2)-(minSize/2);
+							console.log("高长")
+						}else{
+							minSize = height;
+							maxSize = width;
+							index_x_start=(maxSize/2)-(minSize/2);
+							index_y_start=0;
+							console.log("宽长")						
+						}
+						canvas.style.width=plusWidth+"px";
+						canvas.style.height=plusWidth+"px";
+
+						//将原裁剪并压缩到画布上
+						context.drawImage(imgObj,index_x_start,index_y_start,minSize,minSize,0,0,plusWidth,plusWidth); 
+						}
+						
+						
+						
+					}, function ( e ) {//发生异常调用的方法
 						mui.openWindow("index.html", "index.html");
-					}, {filter:"image"} );
+					}, {filter:"image"} );//过滤，只可以pick 图片
 					
 					// mui.openWindow("plugin/crop_tool/myface-uploader.html","myface-uploader.html");
 					mui("#my_face_img_sheet").popover("toggle");
