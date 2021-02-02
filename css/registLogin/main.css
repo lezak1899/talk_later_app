@@ -156,9 +156,9 @@ iframe {
 .login100-form-title {
   display: block;
   font-family: Poppins-Bold;
-  font-size: 39px;
+  font-size: 30px;
   color: #333333;
-  line-height: 1.2;
+  line-height: 80px;
   text-align: center;
 }
 
@@ -168,6 +168,13 @@ iframe {
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
+  margin: 0 auto;
+}
+
+.login100-form-img-squ {
+  display: block;
+  width: 200px;
+  height: 155px;
   margin: 0 auto;
 }
 

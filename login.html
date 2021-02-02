@@ -50,12 +50,15 @@
 			<div class="container-login100">
 				<div class="wrap-login100 p-t-85 p-b-20">
 					<form id="userform">
-						<span class="login100-form-title p-b-70">
-							<h5>回聊</h5>
-						</span>
-						<span class="login100-form-avatar">
-							<img id="img_login_face" src="./static/image/gouzi.png" alt="回聊">
-						</span>
+						<div style="height: 300px;">
+							<span class="login100-form-img-squ" ">
+								<img id="img_login_face"  height="155px" width="200px" src="static/image/liaotian.png" alt="回聊">
+							</span>
+							<span class="login100-form-title">
+								做更懂你的聊天app
+							</span>
+						</div>
+						
 
 						<div class="wrap-input100 validate-input m-t-85 m-b-35">
 							<input class="input100" type="text" id="username" name="username" placeholder="账号">
@@ -80,8 +83,6 @@
 		<script type="text/javascript" src="js/appConfig.js" ></script>
 		<script type="text/javascript">
 			
-			
-			
 			mui.plusReady(function(){
 				
 				//如果进程被kill掉，重新打开app加载上次的登录用户的信息，并跳转到聊天页面
@@ -95,7 +96,7 @@
 				var cid = plus.push.getClientInfo().clientid;//  获得当前登录设备的id
 				
 				registerButton.addEventListener("tap",function (e) {
-				  console.log("tap event trigger");
+					mui.openWindow("pages/user/register.html");
 				});
 				
 				loginButton.addEventListener("tap",function(e){
@@ -129,11 +130,12 @@
 						},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
+						timeout:3000,//超时时间设置为10秒；
 						headers:{'Content-Type':'application/json'},	              
 						success:function(resp){
 							
-							if(resp.code=="0"){
+							if(resp.code=="200"){
+								console.log("登录成功，状态码为："+resp.code)
 								utils.setCurrentUser(resp.data.currentUser);//将当前登录用户缓存起来
 								mui.openWindow("index.html");
 							}

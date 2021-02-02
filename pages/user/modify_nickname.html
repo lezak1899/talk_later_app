@@ -26,8 +26,54 @@
 
 	<body>
 		<script src="../../js/mui.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/appConfig.js"></script>
 		<script type="text/javascript">
 			mui.init()
+			mui.plusReady(function(){
+				var currentUser=utils.getCurrentUser();
+				console.log(JSON.stringify(currentUser));
+				var txt_nickname = document.getElementById("txt_nickname");
+				var link_submit_nickname = document.getElementById("link_submit_nickname");
+				
+				link_submit_nickname.addEventListener("tap",function (e) {
+					
+					if(utils.isNull(txt_nickname.value)){
+						utils.popUpToast("新昵称不能为空！")
+						// username.focus();	
+					}
+					
+					plus.nativeUI.showWaiting("请稍等。。。");
+				
+					//调用后端接口
+					mui.ajax(appConfig.serviceUrl+"/user/modify/nickname",{
+						data:{
+							"id":currentUser.id,
+							"nickname":txt_nickname.value
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:3000,//超时时间设置为10秒；
+						headers:{'Content-Type':'application/json'},	              
+						success:function(resp){
+							console.log(JSON.stringify(resp));
+							if(resp.code=="200"){
+								plus.nativeUI.closeWaiting();
+								utils.refreshCurrentUser(resp.data.currentUser);
+								mui.back();
+							}
+							else{
+								plus.nativeUI.closeWaiting
+								utils.popUpToast("修改昵称失败！")
+							}
+						}
+					});
+
+				})
+				
+				
+				
+			})
 		</script>
 	</body>
 

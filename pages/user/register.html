@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/header.css" />
+	</head>
+	
+		<header class="mui-bar mui-bar-nav title-color">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<a id="link_submit_password" class="mui-icon mui-icon-right-nav mui-pull-right" 
+				style="color: white;font-size: 14px;line-height: 25px;">完成</a>
+			<h1 class="mui-title" style="color: white;">注册回聊账号</h1>
+		</header>
+		
+		<div class="mui-content">
+			<form class="mui-input-group">
+			    <div class="mui-input-row">
+			        <label>账号</label>
+			    <input id="username" type="text" class="mui-input-clear verify" placeholder="请输入账号,用于登录">
+			    </div>
+				<div class="mui-input-row">
+				    <label>昵称</label>
+				<input id="nickname" type="text" class="mui-input-clear verify" placeholder="请输入昵称">
+				</div>
+				
+				<div class="mui-input-row">
+				    <label>个性签名</label>
+				    <input id="fun_signature" type="password" class="mui-input-password verify" placeholder="请输入个性签名">
+				</div>
+			
+			    <div class="mui-input-row">
+			        <label>密码</label>
+			        <input id="password" type="password" class="mui-input-password verify" placeholder="请输入密码">
+			    </div>
+				
+				<div class="mui-input-row">
+				    <label>密码</label>
+				    <input id="confirm_password" type="password" class="mui-input-password verify" placeholder="请再次输入确认密码">
+				</div>
+			    <div class="mui-button-row">
+			        <button id="submit_button" type="button" class="mui-btn mui-btn-primary" >确认</button>
+			        <button id="reset_button" type="button" class="mui-btn mui-btn-danger" >重置</button>
+			    </div>
+			</form>
+		
+		</div>
+		
+
+	<body>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/appConfig.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function(){
+				var username=document.getElementById("username");
+				var nickname=document.getElementById("nickname");
+				var fun_signature=document.getElementById("fun_signature");
+				var password=document.getElementById("password");
+				var confirm_password=document.getElementById("confirm_password");
+				var submit_button=document.getElementById("submit_button");
+				var reset_button=document.getElementById("reset_button");
+				
+				submit_button.addEventListener("tap",function(e){
+					
+					mui(".verify").each(function() {
+					//若当前input为空，则alert提醒 
+					if(!this.value || this.value.trim() == "") {
+					    var label = this.previousElementSibling;
+					    mui.alert(label.innerText + "不允许为空！");
+					    return false;
+					}
+					}); 
+					if(password.value!=confirm_password.value){
+						var label = this.previousElementSibling;
+						mui.alert("两次输入密码不一致！");
+						return false;
+					}
+					
+					mui.ajax(appConfig.serviceUrl+"/user/register",{
+							data:{
+								username:username.value,
+								nickname:nickname.value,
+								funSignature:fun_signature.value,
+								password:password.value
+							},
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:3000,//超时时间设置为10秒；
+							headers:{'Content-Type':'application/json'},	              
+							success:function(resp){
+								
+								if(resp.code=="200"){
+									mui.confirm("注册成功，是否跳转登录页面", "系统提示",['取消','确认'],function (e) {
+										if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
+											mui.openWindow("../../login.html");
+											return;
+										}else{
+											location.reload();
+										}
+										  
+									},'div')
+									
+								}
+								else{
+									console.log("注册失败，状态码为："+resp.code)
+								}
+								
+								
+							}
+						});
+						//使原来form表单的提交失效
+						e.preventDefault();
+					})
+
+			})
+		</script>
+	</body>
+
+</html>

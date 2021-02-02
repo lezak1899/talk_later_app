@@ -66,7 +66,6 @@ window.utils = {
 	/**
 	 * 通过缓存重新登录
 	 * @return {Object} 
-	
 	 */
 	logOut:function(){
 		mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
@@ -74,8 +73,17 @@ window.utils = {
 				plus.storage.clear();
 				mui.openWindow("login.html");
 			}
-			
 		},'div')
+	},
+	/**
+	 * 通过刷新当前登录用户的信息
+	 * @return {Object} 
+	 */
+	refreshCurrentUser: function(newCurrentUser){
+		var str = JSON.stringify(newCurrentUser)
+		plus.storage.removeItem("currentUser");
+		plus.storage.setItem("currentUser",str);
 	}
+	
 	
 }
