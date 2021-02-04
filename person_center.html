@@ -15,7 +15,7 @@
 					<a id="link_face_img" href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 						style="line-height: 50px;color: lightgray;margin-right: 3px;"></span>
-						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;" src="static/image/likunzhu.jpg">
+						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;" src="">
 						<div class="mui-media-body" style="line-height: 50px;font-size: 16px;">
 							头像	
 						</div>
@@ -26,7 +26,7 @@
 						<span class="mui-pull-right mui-icon mui-icon-arrowright"
 						style="color: lightgray;margin-right: 3px;"></span>
 						<span id="my_nickname" class="mui-pull-right" 
-						style="font-size: 14px;color: gray;">likunzhu</span>
+						style="font-size: 14px;color: gray;"></span>
 						<div class="mui-media-body" style="font-size: 16px;">
 							昵称
 						</div>
@@ -34,10 +34,17 @@
 				</li>
 				<li class="mui-table-view-cell mui-media">
 					<a href="javascript:;">
-						
-						<span id="my_username" class="mui-pull-right" style="font-size: 14px;color: gray;margin-right: 10px;">490972983</span>
+						<span id="my_username" class="mui-pull-right" style="font-size: 14px;color: gray;margin-right: 10px;"></span>
 						<div class="mui-media-body" style="font-size: 16px;">
 							我的账号
+						</div>
+					</a>	
+				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a href="javascript:;">
+						<span id="my_signature" class="mui-pull-right" style="font-size: 14px;color: gray;margin-right: 10px;"></span>
+						<div class="mui-media-body" style="font-size: 16px;">
+							签名
 						</div>
 					</a>	
 				</li>
@@ -53,7 +60,7 @@
 					</a>
 				</li>
 				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
+					<a id="link_qrcode" href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 						style="color: lightgray;margin-right: 3px;"></span>
 						<img id="my_qrcode" class="mui-media-object mui-pull-right"style="max-width: 30px;max-height: 30px;"  src="static/image/qrcode_logo.png">
@@ -84,6 +91,12 @@
 			
 			mui.plusReady(function () {
 				
+				//查看二维码
+				var link_qrcode = document.getElementById("link_qrcode");
+				link_qrcode.addEventListener("tap",function(){
+					mui.openWindow("/pages/user/view_qrcode.html");
+				})
+				
 				var link_face_img = document.getElementById("link_face_img");
 				link_face_img.addEventListener("tap",function(){
 					mui.openWindow("face_image.html");
@@ -109,7 +122,22 @@
 			
 				//退出登录
 				login_out.addEventListener("tap",function(){
-					utils.logOut(); 
+					
+					mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
+						if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
+						
+						plus.storage.clearAsync(function(){
+								console.log("clearAsync success");
+								plus.runtime.restart();
+							}, function(e){
+								console.log("clearAsync failed: "+JSON.stringify(e));
+							});
+
+						}
+					},'div')
+				
+						
+					
 				}) 
 			
 			});
@@ -119,9 +147,11 @@
 				var my_face_img = document.getElementById("my_face_img");
 				var my_nickname = document.getElementById("my_nickname");
 				var my_username = document.getElementById("my_username");
+				var my_signature = document.getElementById("my_signature");
 				console.log(JSON.stringify(currentUser));
 				my_nickname.innerHTML = currentUser.nickname;
 				my_username.innerHTML = currentUser.username;
+				my_signature.innerHTML = currentUser.funSignature;
 				if(utils.isNotNull(currentUser.faceImg)){
 					my_face_img.src=appConfig.imgServiceUrl+currentUser.faceImg;
 				}

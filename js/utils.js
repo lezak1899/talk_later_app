@@ -39,6 +39,7 @@ window.utils = {
 	
 	 */
 	setCurrentUser: function(currentUser) {
+		
 		var str = JSON.stringify(currentUser)
 		plus.storage.setItem("currentUser",str);
 		// plus.storage.setItem("currentUser",currentUser);
@@ -63,18 +64,7 @@ window.utils = {
 			mui.openWindow("index.html");
 		}
 	},
-	/**
-	 * 通过缓存重新登录
-	 * @return {Object} 
-	 */
-	logOut:function(){
-		mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
-			if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
-				plus.storage.clear();
-				mui.openWindow("login.html");
-			}
-		},'div')
-	},
+
 	/**
 	 * 通过刷新当前登录用户的信息
 	 * @return {Object} 

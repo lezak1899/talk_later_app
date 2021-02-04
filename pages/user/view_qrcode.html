@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/header.css" />
+		
+	</head>
+	
+		<header class="mui-bar mui-bar-nav title-color">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
+			<h1 class="mui-title" style="color: white;">扫一扫添加好友</h1>
+		</header>
+		
+		<div id="mui-content" style="padding: 80px 30px 0px 30px;">
+			<div style="background-color: white;padding-top: 20px;padding-left: 20px;">
+				<img id="img_myface" src="" width="60px" style="border-radius: 8%;float: left;"/>
+				<label id="lab_nickname" style="float: left;margin-left: 10px;margin-top: 10px;">风间影月</label>
+			</div>
+			<div style="background-color: white;text-align: center;">
+		    	<img id="img_my_qrcode" src="" />
+		    </div>
+		    <div style="background-color: white;text-align: center;">
+		    	<p style="padding-bottom: 10px;font-size: 12px;">扫一扫添加我为好友！</p>
+		    </div>
+		</div>
+		
+
+	<body>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/utils.js"></script>
+		<script src="../../js/appConfig.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function(){
+				var currentUser = utils.getCurrentUser();
+				var qrcode = currentUser.qrcode;
+				var userface = currentUser.faceImage;
+				var nickname = currentUser.nickname;
+				
+				// 获取屏幕宽度，设置图片
+				var img_my_qrcode = document.getElementById("img_my_qrcode");
+				img_my_qrcode.src = appConfig.imgServiceUrl + qrcode;
+				
+				console.log(appConfig.imgServiceUrl )
+				console.log(qrcode)
+				console.log(appConfig.imgServiceUrl + qrcode)
+				
+				
+				var img_myface = document.getElementById("img_myface");
+				img_myface.src = "../../static/image/默认头像.png";
+				
+				var lab_nickname = document.getElementById("lab_nickname");
+				lab_nickname.innerHTML = nickname;
+				
+				// 获取手机端可见屏幕宽度
+				var imgWidth = document.body.clientWidth-60;
+				img_my_qrcode.width=imgWidth;
+				img_my_qrcode.height=imgWidth;
+				
+	
+				
+				
+			})
+		</script>
+	</body>
+
+</html>

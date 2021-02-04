@@ -95,6 +95,11 @@
 				var loginButton = document.getElementById("loginButton");
 				var cid = plus.push.getClientInfo().clientid;//  获得当前登录设备的id
 				
+				//清楚上次登录遗留的信息
+				username.value="";
+				password.value="";
+			
+			
 				registerButton.addEventListener("tap",function (e) {
 					mui.openWindow("pages/user/register.html");
 				});
@@ -104,46 +109,55 @@
 					if(utils.isNull(username.value)){
 						utils.popUpToast("账号不能为空！")
 						// username.focus();	
+						return;
 					}else{
 						if(utils.isNull(password.value)){
 							utils.popUpToast("密码不能为空！")
 							// password.focus();
+							return;
 						}
 					}
 					
 					if(username.value.length>12){
 						utils.popUpToast("用户名不能大于12个字符！")
-						return false;
+						return;
 					}else{
 						if(password.value.length>12){
 							utils.popUpToast("密码不能大于12个字符！")
-							return false;
+							return;
 						}
 					}
-
 					
+					
+					void plus.nativeUI.closeWaiting();
 					//调用后端接口
 					mui.ajax(appConfig.serviceUrl+"/user/login",{
 						data:{
 							username:username.value,
-							password:password.value
+							password:password.value,
+							lastLoginEquipment:plus.device.model
 						},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
-						timeout:3000,//超时时间设置为10秒；
+						timeout:7000,//超时时间设置为7秒；
 						headers:{'Content-Type':'application/json'},	              
 						success:function(resp){
+							plus.nativeUI.closeWaiting();
 							
 							if(resp.code=="200"){
 								console.log("登录成功，状态码为："+resp.code)
 								utils.setCurrentUser(resp.data.currentUser);//将当前登录用户缓存起来
-								mui.openWindow("index.html");
+								mui.openWindow("index.html","index.html");
 							}
 							else{
-								console.log("登录失败，状态码为："+resp.code)
-							}
-							
-							
+								mui.alert("登录失败，"+resp.message);
+							}	
+						},
+						error:function(xhr,type,errorThrown){
+							plus.nativeUI.closeWaiting();
+							//异常处理；
+							mui.alert("服务端发生错误，请联系管理员！");
+							console.log(type);
 						}
 					});
 					//使原来form表单的提交失效

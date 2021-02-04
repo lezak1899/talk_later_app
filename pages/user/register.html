@@ -11,8 +11,8 @@
 	
 		<header class="mui-bar mui-bar-nav title-color">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-			<a id="link_submit_password" class="mui-icon mui-icon-right-nav mui-pull-right" 
-				style="color: white;font-size: 14px;line-height: 25px;">完成</a>
+<!-- 			<a id="link_submit_password" class="mui-icon mui-icon-right-nav mui-pull-right" 
+				style="color: white;font-size: 14px;line-height: 25px;">完成</a> -->
 			<h1 class="mui-title" style="color: white;">注册回聊账号</h1>
 		</header>
 		
@@ -29,7 +29,7 @@
 				
 				<div class="mui-input-row">
 				    <label>个性签名</label>
-				    <input id="fun_signature" type="password" class="mui-input-password verify" placeholder="请输入个性签名">
+				    <input id="fun_signature" type="password" class="mui-input-clear verify" placeholder="请输入个性签名">
 				</div>
 			
 			    <div class="mui-input-row">
@@ -54,6 +54,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/utils.js"></script>
 		<script src="../../js/appConfig.js"></script>
+		<script src="../../js/jquery-3.0.0.js"></script>
 		<script type="text/javascript">
 			mui.init()
 			mui.plusReady(function(){
@@ -65,6 +66,14 @@
 				var submit_button=document.getElementById("submit_button");
 				var reset_button=document.getElementById("reset_button");
 				
+				
+				reset_button.addEventListener("tap",function(e){
+					location.reload();
+				})
+				
+
+				
+				
 				submit_button.addEventListener("tap",function(e){
 					
 					mui(".verify").each(function() {
@@ -72,15 +81,16 @@
 					if(!this.value || this.value.trim() == "") {
 					    var label = this.previousElementSibling;
 					    mui.alert(label.innerText + "不允许为空！");
-					    return false;
+					    return ;
 					}
 					}); 
 					if(password.value!=confirm_password.value){
 						var label = this.previousElementSibling;
 						mui.alert("两次输入密码不一致！");
-						return false;
+						return ;
 					}
 					
+					plus.nativeUI.showWaiting("请稍等。。。");
 					mui.ajax(appConfig.serviceUrl+"/user/register",{
 							data:{
 								username:username.value,
@@ -90,15 +100,16 @@
 							},
 							dataType:'json',//服务器返回json格式数据
 							type:'post',//HTTP请求类型
-							timeout:3000,//超时时间设置为10秒；
+							timeout:3000,//超时时间设置为3秒；
 							headers:{'Content-Type':'application/json'},	              
 							success:function(resp){
+								plus.nativeUI.closeWaiting();
 								
 								if(resp.code=="200"){
 									mui.confirm("注册成功，是否跳转登录页面", "系统提示",['取消','确认'],function (e) {
 										if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
+											$(".verify").val("");
 											mui.openWindow("../../login.html");
-											return;
 										}else{
 											location.reload();
 										}
@@ -107,10 +118,15 @@
 									
 								}
 								else{
-									console.log("注册失败，状态码为："+resp.code)
-								}
-								
-								
+									mui.alert("注册失败,"+resp.message);
+									
+								}	
+							},
+							error:function(xhr,type,errorThrown){
+								plus.nativeUI.closeWaiting();
+								//异常处理；
+								mui.alert("服务端发生错误，请联系管理员！");
+								console.log(type);
 							}
 						});
 						//使原来form表单的提交失效

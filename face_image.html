@@ -17,7 +17,7 @@
 		</header>
 		
 		<div class="mui-content">
-			<img id="img_myface" src="./static/image/默认头像.png"/>
+			<img id="img_myface" src=""/>
 			<canvas id='c'></canvas> 
 		</div>
 		
@@ -68,6 +68,7 @@
 				var imgWidth=document.body.clientWidth; 
 				img_myface.width = imgWidth;
 				img_myface.high = imgWidth;
+				img_myface.src="./static/image/默认头像.png";
 				
 				//控制弹出框
 				my_face_operation.addEventListener("tap",function(){

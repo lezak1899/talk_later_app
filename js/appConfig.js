@@ -5,6 +5,6 @@ window.appConfig = {
 	 */
 	serviceUrl: 'http://192.168.66.47:8088',
 	
-	imgServiceUrl:'http://192.168.31.111:8080'
+	imgServiceUrl:'https://talk-later-file.oss-cn-guangzhou.aliyuncs.com/'
 	
 }	
