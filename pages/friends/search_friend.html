@@ -11,15 +11,15 @@
 	
 		<header class="mui-bar mui-bar-nav title-color">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-			<a id="link_submit_nickname" class="mui-icon mui-icon-right-nav mui-pull-right" 
-				style="color: white;font-size: 14px;line-height: 25px;">完成</a>
-			<h1 class="mui-title" style="color: white;">设置昵称</h1>
+			<a id="search" class="mui-icon mui-icon-right-nav mui-pull-right" 
+				style="color: white;font-size: 14px;line-height: 25px;">搜索</a>
+			<h1 class="mui-title" style="color: white;">添加好友</h1>
 		</header>
 		
 		<div class="mui-content">
 			<div class="mui-input-row">
-			    <input id="txt_nickname" type="text" class="mui-input-speech mui-input-clear" 
-			    	placeholder="修改昵称">
+			    <input id="txt_friend_username" type="text" class=" mui-input-clear" 
+			    	placeholder="通过账号搜索好友">
 			</div>
 		</div>
 		
@@ -31,25 +31,24 @@
 		<script type="text/javascript">
 			mui.init()
 			mui.plusReady(function(){
-				var currentUser=utils.getCurrentUser();
-				console.log(JSON.stringify(currentUser));
-				var txt_nickname = document.getElementById("txt_nickname");
-				var link_submit_nickname = document.getElementById("link_submit_nickname");
+
+				var search = document.getElementById("search");
+				var txt_friend_username = document.getElementById("txt_friend_username");
 				
-				link_submit_nickname.addEventListener("tap",function (e) {
+				
+				
+				search.addEventListener("tap",function (e) {
 					
-					if(utils.isNull(txt_nickname.value)){
-						utils.popUpToast("新昵称不能为空！")
-						// username.focus();	
+					if(utils.isNull(txt_friend_username.value)){
+						utils.popUpToast("请输入你要添加的好友账号！")
+						return;	
 					}
 					
 					plus.nativeUI.showWaiting("请稍等。。。");
 				
 					//调用后端接口
-					mui.ajax(appConfig.serviceUrl+"/user/modify/nickname",{
+					mui.ajax(appConfig.serviceUrl+"/user/search?friendUsername="+txt_friend_username.value,{
 						data:{
-							"id":currentUser.id,
-							"nickname":txt_nickname.value
 						},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
@@ -58,10 +57,20 @@
 						success:function(resp){
 							plus.nativeUI.closeWaiting();
 							if(resp.code=="200"){
-								mui.back();
+								// mui.openWindow("/pages/friends/search_result.html");
+								console.log(resp.data.username);
+								mui.openWindow({
+									url: "/pages/friends/search_result.html",
+									id: "/pages/friends/search_result.html",
+									styles: {},
+									extras: {
+										friendUsername:resp.data.username
+									}
+								});
 							}
 							else{
-								utils.popUpToast("修改昵称失败！")
+								utils.popUpToast("查找失败，"+resp.message);
+								
 							}
 						},
 						error:function(xhr,type,errorThrown){

@@ -7,20 +7,43 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link rel="stylesheet" type="text/css" href="../../css/header.css" />
+		<style>
+			#btn_add_friend {
+		    	background-color: #1aad19;
+		    }
+		    #btn_add_friend:active {
+		        background-color: #128e12;
+		    }
+		</style>
 	</head>
 	
 		<header class="mui-bar mui-bar-nav title-color">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-			<a id="link_submit_nickname" class="mui-icon mui-icon-right-nav mui-pull-right" 
-				style="color: white;font-size: 14px;line-height: 25px;">完成</a>
-			<h1 class="mui-title" style="color: white;">设置昵称</h1>
+			<h1 class="mui-title" style="color: white;">搜索结果</h1>
 		</header>
 		
 		<div class="mui-content">
-			<div class="mui-input-row">
-			    <input id="txt_nickname" type="text" class="mui-input-speech mui-input-clear" 
-			    	placeholder="修改昵称">
+			<ul class="mui-table-view">
+			    <li class="mui-table-view-cell mui-media" style="padding-top: 10px;">
+			        <a href="javascript:;">
+			            <img id="img_friend_face" class="mui-media-object mui-pull-left" src="" 
+			            	style="border-radius: 8%;line-height: 50px;max-width: 50px;height: 50px;">
+			            <div class="mui-media-body">
+			               	<label id="lab_friend_nickname"></label>
+			                <p id="p_friend_username" class="mui-ellipsis"></p>
+			            </div>
+			        </a>
+			    </li>
+			</ul>
+			
+			<br />
+			<div style="text-align: center;">
+				<button id="btn_add_friend" type="button" class="mui-btn mui-btn-block" 
+					style="color: white;width: 90%;display: inline;padding: 12px 0">添加好友</button>
+				<button id="btn_back" type="button" class="mui-btn mui-btn-block" 
+					style="width: 90%;display: inline;padding: 12px 0">返回</button>
 			</div>
+			
 		</div>
 		
 
@@ -32,14 +55,13 @@
 			mui.init()
 			mui.plusReady(function(){
 				var currentUser=utils.getCurrentUser();
-				console.log(JSON.stringify(currentUser));
-				var txt_nickname = document.getElementById("txt_nickname");
-				var link_submit_nickname = document.getElementById("link_submit_nickname");
 				
-				link_submit_nickname.addEventListener("tap",function (e) {
+				var search = document.getElementById("search");
+				
+				search.addEventListener("tap",function (e) {
 					
 					if(utils.isNull(txt_nickname.value)){
-						utils.popUpToast("新昵称不能为空！")
+						utils.popUpToast("请输入你要添加的好友账号！")
 						// username.focus();	
 					}
 					
