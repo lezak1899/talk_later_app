@@ -86,6 +86,7 @@
 		
 		<script src="js/mui.js"></script>
 		<script src="js/utils.js"></script>
+		<script src="js/appConfig.js"></script>
 		<script type="text/javascript">
 			mui.init()
 			
@@ -124,7 +125,7 @@
 				login_out.addEventListener("tap",function(){
 					
 					mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
-						if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
+						if(e.index==1){//'取消'按钮下标为0.确认按钮下标为1
 						
 						plus.storage.clearAsync(function(){
 								console.log("clearAsync success");

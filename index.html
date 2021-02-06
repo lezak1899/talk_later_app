@@ -75,12 +75,15 @@
 				//应用界面管理对象
 				var indexWebview = plus.webview.currentWebview();
 
+				//装载页面
 				for (var i = 0; i < pageArray.length; i++) {
 					//页面
 					var page = plus.webview.create(pageArray[i].pageUrl, pageArray[i].pageId, pageStyle);
 					page.hide();
 					indexWebview.append(page);
 				}
+				
+			
 				
 				
 				

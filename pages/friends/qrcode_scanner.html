@@ -7,21 +7,27 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link rel="stylesheet" type="text/css" href="../../css/header.css" />
+		
+		<style>
+			
+			#scanComponent {
+				width: 100%;
+				top: 44px;
+				bottom: 0px;
+				position: absolute;
+				text-align: center;
+				background: #000000;
+			}
+			
+		</style>
 	</head>
 	
 		<header class="mui-bar mui-bar-nav title-color">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
-			<a id="search" class="mui-icon mui-icon-right-nav mui-pull-right" 
-				style="color: white;font-size: 14px;line-height: 25px;">搜索</a>
-			<h1 class="mui-title" style="color: white;">添加好友</h1>
+			<h1 class="mui-title" style="color: white;">扫码加好友</h1>
 		</header>
 		
-		<div class="mui-content">
-			<div class="mui-input-row">
-			    <input id="txt_friend_username" type="text" class=" mui-input-clear" 
-			    	placeholder="通过账号搜索好友">
-			</div>
-		</div>
+		<div id="scanComponent"></div>
 		
 
 	<body>
@@ -29,27 +35,38 @@
 		<script src="../../js/utils.js"></script>
 		<script src="../../js/appConfig.js"></script>
 		<script type="text/javascript">
-			mui.init()
+			mui.init({
+				beforeback: function() {
+				　　　　 console.log("返回！")
+				    }
+			})
 			mui.plusReady(function(){
 
-				var search = document.getElementById("search");
-				var txt_friend_username = document.getElementById("txt_friend_username");
-				
-				
-				
-				search.addEventListener("tap",function (e) {
+				// setTimeout("startScan()", "500");
+				startScan();
+			})
+			//初始化并启动
+			var scan;
+			function startScan() {
+				var styles = {
+					frameColor: "#128E12",
+					scanbarColor: "#0062CC",
+					background: ""
+				}
+				scan = new plus.barcode.Barcode('scanComponent', null, styles);
+				scan.onmarked = onmarked; 
+				scan.start();
+			}
+			//当扫码成功执行的方法
+			function onmarked( type, result ) {
+				if (type === 0) {
+					var content = result;
+					console.log(content)
 					
-					if(utils.isNull(txt_friend_username.value)){
-						utils.popUpToast("请输入你要添加的好友账号！")
-						return;	
-					}
-					
-					plus.nativeUI.showWaiting("请稍等。。。");
-				
+					plus.nativeUI.showWaiting("请稍后...");
 					//调用后端接口
-					mui.ajax(appConfig.serviceUrl+"/user/search?friendUsername="+txt_friend_username.value,{
-						data:{
-						},
+					mui.ajax(appConfig.serviceUrl+"/user/search?friendUsername="+content,{
+						data:{},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
 						timeout:10000,//超时时间设置为10秒；
@@ -57,8 +74,7 @@
 						success:function(resp){
 							plus.nativeUI.closeWaiting();
 							if(resp.code=="200"){
-								// mui.openWindow("/pages/friends/search_result.html");
-							
+								
 								mui.openWindow({
 									url: "/pages/friends/search_result.html",
 									id: "/pages/friends/search_result.html",
@@ -83,12 +99,10 @@
 							console.log(type);
 						}
 					});
-
-				})
+				}
+				scan.start();
 				
-				
-				
-			})
+			}
 		</script>
 	</body>
 

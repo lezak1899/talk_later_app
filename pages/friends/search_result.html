@@ -24,13 +24,14 @@
 		
 		<div class="mui-content">
 			<ul class="mui-table-view">
-			    <li class="mui-table-view-cell mui-media" style="padding-top: 10px;">
+			    <li class="mui-table-view-cell mui-media" style="padding: 20px;">
 			        <a href="javascript:;">
 			            <img id="img_friend_face" class="mui-media-object mui-pull-left" src="" 
-			            	style="border-radius: 8%;line-height: 50px;max-width: 50px;height: 50px;">
+			            	style="border-radius: 8%;line-height: 80px;max-width: 80px;height: 80px;">
 			            <div class="mui-media-body">
-			               	<label id="lab_friend_nickname"></label>
-			                <p id="p_friend_username" class="mui-ellipsis"></p>
+			               	<label id="lab_friend_nickname"></label>	
+			                <p id="p_friend_username" class="mui-ellipsis" style="margin: 2px;"></p>
+							<p id="p_friend_funSignature" style="line-height: 24px;color: #000000;font-size: 16px;padding-top: 10px;"></p>
 			            </div>
 			        </a>
 			    </li>
@@ -54,24 +55,38 @@
 		<script type="text/javascript">
 			mui.init()
 			mui.plusReady(function(){
+				
 				var currentUser=utils.getCurrentUser();
 				
-				var search = document.getElementById("search");
+				var currnetWebview = plus.webview.currentWebview();
 				
-				search.addEventListener("tap",function (e) {
-					
-					if(utils.isNull(txt_nickname.value)){
-						utils.popUpToast("请输入你要添加的好友账号！")
-						// username.focus();	
-					}
-					
-					plus.nativeUI.showWaiting("请稍等。。。");
+				var friendUsername = currnetWebview.friendUsername;
+				var friendNickname = currnetWebview.friendNickname;
+				var friendFaceImg = currnetWebview.friendFaceImg;
+				var friendFunSignature = currnetWebview.friendFunSignature;
 				
-					//调用后端接口
-					mui.ajax(appConfig.serviceUrl+"/user/modify/nickname",{
+				
+				var img_friend_face = document.getElementById("img_friend_face");
+				var lab_friend_nickname = document.getElementById("lab_friend_nickname");
+				var p_friend_username = document.getElementById("p_friend_username");
+				var p_friend_funSignature = document.getElementById("p_friend_funSignature");
+				
+				
+				img_friend_face.src=appConfig.imgServiceUrl+friendFaceImg;
+				lab_friend_nickname.innerHTML=friendNickname;
+				p_friend_username.innerHTML=friendUsername;
+				p_friend_funSignature.innerHTML=friendFunSignature;
+				var btn_back = document.getElementById("btn_back");
+				btn_back.addEventListener("tap",function(){
+					mui.back();
+				})
+				
+				var btn_add_friend = document.getElementById("btn_add_friend");
+				btn_add_friend.addEventListener("tap",function(){
+					mui.ajax(appConfig.serviceUrl+"/request/sendRequest?senderUsername="+currentUser.username,{
 						data:{
-							"id":currentUser.id,
-							"nickname":txt_nickname.value
+							"senderUsername":currentUser.username,
+							"recipientUsername":friendUsername
 						},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
@@ -79,12 +94,15 @@
 						headers:{'Content-Type':'application/json'},	              
 						success:function(resp){
 							plus.nativeUI.closeWaiting();
+							
 							if(resp.code=="200"){
+								console.log("登录成功，状态码为："+resp.code)
+								mui.alert("请求发送成功！")
 								mui.back();
 							}
 							else{
-								utils.popUpToast("修改昵称失败！")
-							}
+								mui.alert("请求发送失败，"+resp.message);
+							}	
 						},
 						error:function(xhr,type,errorThrown){
 							plus.nativeUI.closeWaiting();
@@ -93,10 +111,8 @@
 							console.log(type);
 						}
 					});
-
+					
 				})
-				
-				
 				
 			})
 		</script>
