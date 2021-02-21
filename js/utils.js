@@ -73,7 +73,88 @@ window.utils = {
 		var str = JSON.stringify(newCurrentUser)
 		plus.storage.removeItem("currentUser");
 		plus.storage.setItem("currentUser",str);
-	}
+	},
 	
+	/**
+	 * 将好友列表存到本地
+	 * @return {Object} 
+	 */
+	setFriendList: function(friendList){
+		var str = JSON.stringify(friendList)
+		plus.storage.removeItem("friendList");
+		plus.storage.setItem("friendList",str);
+	},
+	
+	/**
+	 * 读取好友列表
+	 * @return {Object} 
+	 */
+	 getFriendList: function(){
+		return JSON.parse(plus.storage.getItem("friendList"));
+	},
+	
+	
+	/**
+	 * 和后端的枚举对应
+	 */
+	CONNECT: 1, 	// 第一次(或重连)初始化连接
+	CHAT: 2, 		// 聊天消息
+	SIGNED: 3, 		// 消息签收
+	KEEPALIVE: 4, 	// 客户端保持心跳
+	PULL_FRIEND:5,	// 重新拉取好友
+	
+	/**
+	 * 和后端的 ChatMsg 聊天模型对象保持一致
+	 * @param {Object} senderUsername
+	 * @param {Object} recipientUsername
+	 * @param {Object} msg
+	 * @param {Object} msgId
+	 */
+	ChatMsg: function(senderUsername, recipientUsername, msg, msgId){
+		this.senderUsername = senderUsername;
+		this.recipientUsername = recipientUsername;
+		this.msg = msg;
+		this.id = msgId;
+	},
+	
+	/**
+	 * 构建消息 DataContent 模型对象
+	 * @param {Object} action
+	 * @param {Object} chatMsg
+	 * @param {Object} extand
+	 */
+	DataContent: function(action, chatMsg, extand){
+		this.action = action;
+		this.chatMsg = chatMsg;
+		this.extand = extand;
+	},
+	
+	/**
+	 * 单个聊天记录的对象
+	 * @param {Object} myId
+	 * @param {Object} friendId
+	 * @param {Object} msg
+	 * @param {Object} flag
+	 */
+	ChatHistory: function(myId, friendId, msg, flag){
+		this.myId = myId;
+		this.friendId = friendId;
+		this.msg = msg;
+		this.flag = flag;
+	},
+	
+	/**
+	 * 快照对象
+	 * @param {Object} myId
+	 * @param {Object} friendId
+	 * @param {Object} msg
+	 * @param {Object} isRead	用于判断消息是否已读还是未读
+	 */
+	ChatSnapshot: function(myId, friendId, msg, isRead){
+		this.myId = myId;
+		this.friendId = friendId;
+		this.msg = msg;
+		this.isRead = isRead;
+	}
 	
 }

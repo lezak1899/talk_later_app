@@ -19,7 +19,7 @@
 	</head>
 	<body>
 		<header class="mui-bar mui-bar-nav title-color">
-			<h1 class="mui-title title "><b>回聊</b></h1>
+			<h1 class="mui-title title" id="talk_later_title"><b>回聊</b></h1>
 		</header>
 
 		<nav class="mui-bar mui-bar-tab">
@@ -68,6 +68,14 @@
 
 			mui.plusReady(function() {
 				
+				//坚持网络是否连接
+				netCheck()
+				
+				// 对网络连接进行事件监听
+				netChangeSwitch();
+				
+				
+				
 				//重写手机的返回，禁用返回
 				mui.back = function(){
 					return false;
@@ -82,10 +90,7 @@
 					page.hide();
 					indexWebview.append(page);
 				}
-				
 			
-				
-				
 				
 				// 默认页面
 				plus.webview.show(pageArray[0].pageId);
@@ -106,10 +111,35 @@
 					}
 				})
 
-				// setTimeout("initData()", "1000");
-
-
-			})
+				
+			})//plusready
+			// 监听网络状态更改
+			function netChangeSwitch(){
+				document.addEventListener("netchange", function(){
+					// 网络状态获取和判断
+					var connectionStatus = plus.networkinfo.getCurrentType();
+					var talk_later_title = document.getElementById("talk_later_title");
+					
+					if (connectionStatus != 0 && connectionStatus != 1) {
+						// 重新打开网络连接
+						talk_later_title.innerHTML = "回聊";
+					} else {
+						// 关闭网络连接
+						talk_later_title.innerHTML = "回聊(未连接)";
+					}
+				});
+			}
+			
+			function netCheck(){
+				
+					var connectionStatus = plus.networkinfo.getCurrentType();
+					var talk_later_title = document.getElementById("talk_later_title");
+					if (connectionStatus == 0 || connectionStatus == 1) {
+						talk_later_title.innerHTML = "回聊(未连接)";
+					}
+			}
+			
+			
 		</script>
 
 	</body>
