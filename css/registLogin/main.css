@@ -158,7 +158,7 @@ iframe {
   font-family: Poppins-Bold;
   font-size: 30px;
   color: #333333;
-  line-height: 80px;
+  line-height: 50px;
   text-align: center;
 }
 
@@ -286,9 +286,9 @@ iframe {
 
 .login100-form-btn {
   font-family: Poppins-Medium;
-  font-size: 18px;
+  font-size: 15px;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.0;
 
   /*display: -webkit-box;*/
   /*display: -webkit-flex;

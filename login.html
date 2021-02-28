@@ -9,6 +9,14 @@
 
 		<link rel="stylesheet" type="text/css" href="css/registLogin/util.css">
 		<link rel="stylesheet" type="text/css" href="css/registLogin/main.css">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		
+		    <!-- Loding font -->
+		    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,700" rel="stylesheet">
+		
+		    <!-- Custom Styles -->
+		    <link rel="stylesheet" type="text/css" href="./styles.css">
 
 		<script type="text/javascript" charset="utf-8">
 			mui.init();
@@ -49,8 +57,10 @@
 		<div class="mui-content">
 			<div class="container-login100">
 				<div class="wrap-login100 p-t-85 p-b-20">
+
+
 					<form id="userform">
-						<div style="height: 300px;">
+						<div style="height: 280px;">
 							<span class="login100-form-img-squ" ">
 								<img id="img_login_face"  height="155px" width="200px" src="static/image/liaotian.png" alt="回聊">
 							</span>
@@ -58,24 +68,19 @@
 								做更懂你的聊天app
 							</span>
 						</div>
-						
 
-						<div class="wrap-input100 validate-input m-t-85 m-b-35">
-							<input class="input100" type="text" id="username" name="username" placeholder="账号">
-							<span class="focus-input100"></span>
+						<div class="form-group">
+							<input  type="email" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter acount">
+
+						</div>
+						<div class="form-group">
+							<input type="password" class="form-control" id="password" placeholder="Password">
 						</div>
 
-						<div class="wrap-input100 validate-input m-b-50">
-							<input class="input100" type="password" id="password" name="password" placeholder="密码">
-							<span class="focus-input100"></span>
-						</div>
 					</form>
-					<button id="loginButton" class="login100-form-btn" style="margin-bottom: 10px;">
-						登录
-					</button>
-					<button  id="registerButton" class="login100-form-btn">
-						注册
-					</button>	
+
+				<button id="loginButton" class="btn btn-lg btn-block " style="background-color:#EB3D72;color:white;">登录</button>
+				<button id="registerButton" class="btn btn-lg btn-block " style="background-color:#FED150;color:white;">注册</button>
 				</div>
 			</div>
 		</div>

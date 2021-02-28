@@ -35,24 +35,8 @@
 			<div id="msg-outter" class="mui-content">
 				<div id='msg'>
 					
-					<div class="friend_lists">
-						<div class="header_img">
-							<img src="image/face-default-cat.png" width="40px" height="40px" />
-						</div>
-						<div class="msg-wrapper right">
-							<p class="msg-left-white">晚上过来吃饭？</p>
-						</div>
-					</div>
-		
-					<div class="me_lists">
-						<div class="header_img">
-							<img src="image/face-default-cat.png" width="40px" height="40px" />
-						</div>
-						<div class="msg-wrapper left">
-							<p class="msg-right-green">好的，没问题！时间地点？</p>
-						</div>
-					</div>
-		
+					<!-- 消息渲染 -->
+							
 				</div>
 			</div>
 			
@@ -69,16 +53,12 @@
 		<script src="../../js/utils.js"></script>
 		<script src="../../js/appConfig.js"></script>
 		<script type="text/javascript">
-			var friendUserId;
+			var friendUsername;
 			var friendNickname;
 			var friendFaceImage;
 			mui.init()
 			mui.plusReady(function(){
-				// var friendUserId;
-				// var friendNickname;
-				// var friendFaceImage;
-		
-				
+
 				// 获取我自己的用户信息					
 				var currentUser = utils.getCurrentUser();
 				
@@ -94,14 +74,11 @@
 				friendNickname = chattingWebview.friendNickname;
 				friendFaceImage = chattingWebview.friendFaceImage;
 				
-				console.log(friendFaceImage);
-				
 				// 标题改为朋友的昵称
 				document.getElementById("chatting-nickname").innerHTML = friendNickname;
-				
-				
+			
 				// 渲染初始化的聊天记录HTML
-				// initChatHistory();
+				initChatHistory();
 				
 				var areaMsgList = document.getElementById("msg");
 				// 设置聊天记录进入页面的时候自动滚动到最后一条
@@ -122,10 +99,10 @@
 				});
 				
 				send.addEventListener("tap",function(){
-					// 发送之前判断网络的状态
+					/**
+					 * 1、发送之前判断网络的状态
+					 */
 					var connectionStatus = plus.networkinfo.getCurrentType();
-	
-					//------------------校验----------------------------
 					if (connectionStatus == plus.networkinfo.CONNECTION_UNKNOW ) {
 						utils.popUpToast("网络连接状态未知！");
 						return;
@@ -134,35 +111,36 @@
 						utils.popUpToast("未连接网络！", "error");
 						return;
 					}
-					// 获取消息内容
+					/**
+					 * 2、校验消息文本，判断消息内容，如果长度等于0，则return
+					 */ 
 					var msg_text_val = msg_text.value;
-					
-					// 判断消息内容，如果长度等于0，则return
 					if (msg_text_val.length === 0) {
 						utils.popUpToast("不能发送空白信息！", "error");
 						return;
 					}
-					
-					// 发送消息, 渲染消息的html到msg div之下,页面渲染
-					sendMsg(appConfig.imgServiceUrl + currentUser.faceImg, msg_text_val);
-					
-					
-					
-					// 构建消息体对象
-					var chatMsg = new utils.ChatMsg(currentUser.username, friendUsername, msg_text_val, null);
-					// 构建DataContent
-					var dataContent = new utils.DataContent(utils.CHAT, chatMsg, null);
-					
-					// 调用websocket 发送消息体对象到netty后端
+					/**
+					 * 3、消息渲染消息的html到msg div之下
+					 */ 
+					renderMsg(appConfig.imgServiceUrl + currentUser.faceImg, msg_text_val);
+				
+					/**
+					 * 4、构建消息体对象,并调用websocket 发送消息体对象到netty后端
+					 */ 
+					var chatMsg = new utils.ChatMsg(currentUser.username, friendUsername, msg_text_val, null);// 构建chatMsg
+					var dataContent = new utils.DataContent(utils.CHAT, chatMsg, null);// 构建DataContent
 					var wsWebview = plus.webview.getWebviewById("chat_list.html");
-					
 					wsWebview.evalJS("CHAT.chat('" + JSON.stringify(dataContent) + "')");	
-					
-					
-					
-					// 重置输入框
+					/**
+					 * 5、保存聊天历史记录到本地缓存，并保存快照到缓存中
+					 */ 
+					utils.saveUserChatHistory(currentUser.username, friendUsername, msg_text_val, 2);
+					utils.saveUserChatSnapshot(currentUser.username, friendUsername, msg_text_val, true);
+				
+					/**
+					 * 6、重置输入框，发送消息完毕之后，把发送按钮的颜色改为灰白色
+					 */ 
 					msg_text.value = "";
-					// 发送消息完毕之后，把发送按钮的颜色改为灰白色
 					send.setAttribute("class", "mui-btn-gray");
 				})
 				
@@ -183,8 +161,8 @@
 				areaMsgList.scrollTop = areaMsgList.scrollHeight + areaMsgList.offsetHeight;
 			};
 			
-			// 发送消息
-			function sendMsg(faceImg, msg) {
+			// 在页面渲染聊天信息
+			function renderMsg(faceImg, msg) {
 				
 				var msgHtml = '<div class="me_lists">' +
 								'<div class="header_img">' +
@@ -220,13 +198,13 @@
 			
 			// 播放发送消息的铃声
 			function playSendMsgSound() {
-				var audioPlayer = plus.audio.createPlayer("/mp3/send.mp3");
+				var audioPlayer = plus.audio.createPlayer("../../static/mp3/send.mp3");
 				audioPlayer.play();
 			}
 			
 			// 播放接受消息的铃声
 			function playReceiveMsgSound() {
-				var audioPlayer = plus.audio.createPlayer("/mp3/di_didi.mp3");
+				var audioPlayer = plus.audio.createPlayer("../../mp3/di_didi.mp3");
 				audioPlayer.play();
 			}
 
@@ -236,6 +214,45 @@
 				// 设置聊天记录进入页面的时候自动滚动到最后一条
 				areaMsgList.scrollTop = areaMsgList.scrollHeight + areaMsgList.offsetHeight;
 			};
+			// 初始化用户的聊天记录
+			function initChatHistory() {
+				// var friendUsername;
+				// var friendNickname;
+				// var friendFaceImage;
+				var msg_list = document.getElementById("msg");
+				
+				var me = utils.getCurrentUser();
+				var myUsername = me.username;
+				var myFaceImg = me.faceImg;
+			
+				var chatHistoryList = utils.getUserChatHistory(myUsername, friendUsername);
+				
+				var togetherHTML = "";
+				
+				for (var i = 0 ; i < chatHistoryList.length ; i ++) {
+					var singleMsg = chatHistoryList[i];
+					if (singleMsg.flag == 1) {
+						togetherHTML += '<div class="me_lists">' +
+									'<div class="header_img">' +
+										'<img src="' + appConfig.imgServiceUrl + myFaceImg + '" width="40px" height="40px" />' +
+									'</div>' +
+									'<div class="msg-wrapper left">' +
+										'<p class="msg-right-green">' + singleMsg.msg + '</p>' +
+									'</div>' +
+								  '</div>';
+					} else {
+						togetherHTML += '<div class="friend_lists">' +
+										'<div class="header_img">' +
+											'<img src="' + appConfig.imgServiceUrl + friendFaceImage + '" width="40px" height="40px" />' +
+										'</div>' +
+										'<div class="msg-wrapper right">' +
+											'<p class="msg-left-white">' + singleMsg.msg + '</p>' +
+										'</div>' +
+								  '</div>';
+					}
+				}
+				msg_list.innerHTML = togetherHTML;
+			}
 		</script>
 	</body>
 

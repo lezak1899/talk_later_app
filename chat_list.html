@@ -5,149 +5,354 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="css/mui.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				height: 100%;
+			}
+			
+			.mui-content {
+				height: 100%;
+				overflow: auto;
+			}
+			
+			.red-point{
+		      position: relative;
+		    }
+			
+		    .red-point::before{
+		      content: " ";
+		      border: 5px solid #C9394A;/*设置红色*/
+		      border-radius:5px;/*设置圆角*/
+		      position: absolute;
+		      z-index: 3000;
+		      right: 0%;
+		      margin-right: -10px;
+		      margin-top: 0px;
+		    }
+		</style>
 	</head>
 	<body>
-		<h1 id="test"> 聊天</h1>
+		<div class="mui-content">
+			<ul id="ul_chatSnapshot" class="mui-table-view">
+			
+			   <li class="mui-table-view-cell mui-media">
+		            <div class="mui-media-body">
+			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
+			            	甲
+			            <p class="mui-ellipsis">这里是聊天内容...</p>
+		            </div>
+			    </li>
+			    <li class="mui-table-view-cell mui-media">
+		            <div class="mui-media-body">
+			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
+			            	乙
+			            <p class="mui-ellipsis">这里是聊天内容...</p>
+		            </div>
+			    </li>
+			    <li class="mui-table-view-cell mui-media">
+		            <div class="mui-media-body">
+			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
+			            	丙
+			            <p class="mui-ellipsis">这里是聊天内容...</p>
+		            </div>
+			    </li>
+			    <li class="mui-table-view-cell mui-media">
+		            <div class="mui-media-body">
+			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
+			            	丁
+			            <p class="mui-ellipsis">这里是聊天内容...</p>
+		            </div>
+			    </li>
+			</ul>
+		</div>
+		
 		<script src="js/mui.js"></script>
 		<script src="js/appConfig.js"></script>
 		<script src="js/utils.js"></script>
 		<script type="text/javascript">
 			mui.init();
 			mui.plusReady(function(){
-				
 				//初始化CHAT模块
 				CHAT.init();
+				var currentUser = utils.getCurrentUser();
+				// 左滑删除聊天快照和记录
+				mui("#ul_chatSnapshot").on("tap", "#link_delChatRecord", function(e){
+					var me = this;	// a 标签
+					
+					
+					
+					// 获取朋友id
+					var friendUsername = me.getAttribute("friendUsername");
+					
+					// 1. 删除本地聊天记录
+					utils.deleteUserChatHistory(currentUser.username, friendUsername);
+					// 2. 删除本地聊天快照
+					utils.deleteUserChatSnapshot(currentUser.username, friendUsername);
+					// 3. 移除当前用户操作的dom节点
+					var li = me.parentNode.parentNode;	// 获取li标签
+					var ul_chatSnapshot = document.getElementById("ul_chatSnapshot");
+					ul_chatSnapshot.removeChild(li);	// 删除li标签
+				});
+				
+				// 为聊天快照列表量绑定点击事件
+				mui("#ul_chatSnapshot").on("tap", ".chat-with-friend", function(e){
+					var friendUsername = this.getAttribute("friendUsername");
+					var friendNickname = this.getAttribute("friendNickname");
+					var friendFaceImage = this.getAttribute("friendFaceImage");
+					
+					console.log("friendFaceImage:"+friendFaceImage);
+					
+					// 打开聊天子页面
+					mui.openWindow({
+						url: "pages/chat/chatting.html",
+						id: "chatting-" + friendUsername,	// 每个朋友的聊天页面都是唯一对应的
+						extras: {
+							friendUsername: friendUsername,
+							friendNickname: friendNickname,
+							friendFaceImage: friendFaceImage
+						}
+					});
+					
+					var me = utils.getCurrentUser();
+					// 标记未读状态为已读
+					utils.readUserChatSnapshot(me.username, friendUsername);
+					// 渲染快照列表进行展示
+					loadingChatSnapshot();
+					
+					
+				});
 				
 			})
 			
 			//----------------聊天业务---------------------
-						// 构建聊天业务CHAT
-						window.CHAT = {
-							socket: null,
-							init: function() {
-								if (window.WebSocket) {
-									
-									// 如果当前的状态已经连接，那就不需要重复初始化websocket
-									if (CHAT.socket != null 
-										&& CHAT.socket != undefined 
-										&& CHAT.socket.readyState == WebSocket.OPEN) {
-										return false;
-									}
-									
-									CHAT.socket = new WebSocket(appConfig.nettyServiceUrl);
-									CHAT.socket.onopen = CHAT.wsopen,
-									CHAT.socket.onclose = CHAT.wsclose,
-									CHAT.socket.onerror = CHAT.wserror,
-									CHAT.socket.onmessage = CHAT.wsmessage;
-								} else {
-									alert("手机设备过旧，请升级手机设备...");
-								}
-							},
-							chat: function(msg) {
-								
-								// 如果当前websocket的状态是已打开，则直接发送， 否则重连
-								if (CHAT.socket != null 
-										&& CHAT.socket != undefined  
-										&& CHAT.socket.readyState == WebSocket.OPEN) {
-										CHAT.socket.send(msg);
-								} else {
-									// 重连websocket
-									CHAT.init();
-									setTimeout("CHAT.reChat('" + msg + "')", "1000");
-								}
-								// 渲染快照列表进行展示
-								// loadingChatSnapshot();
-							},
-							reChat: function(msg) {
-								console.log("消息重新发送...");
-								CHAT.socket.send(msg);
-							},
-							wsopen: function() {
-								// console.log("websocket连接已建立...");
-								
-								var me = utils.getCurrentUser();
-								// 构建ChatMsg
-								var chatMsg = new utils.ChatMsg(me.username, null, null, null);
-								// 构建DataContent
-								var dataContent = new utils.DataContent(utils.CONNECT, chatMsg, null);
-								// 发送websocket
-								CHAT.chat(JSON.stringify(dataContent));
-								
-								// // 每次连接之后，获取用户的未读未签收消息列表
-								// fetchUnReadMsg();
-								
-								// // 定时发送心跳
-								// setInterval("CHAT.keepalive()", 10000);
-							},
-							wsmessage: function(e) {
-								console.log("接受到消息：" + e.data);
-								// 调用websocket 发送消息到netty后端
-								var chatWebview = plus.webview.getWebviewById("chatting-ccc");
-								chatWebview.evalJS("receiveMsg('" + e.data + "')");	
-								chatWebview.evalJS("resizeScreen()");	
+			// 构建聊天业务CHAT
+			window.CHAT = {
+				socket: null,
+				init: function() {
+					if (window.WebSocket) {
+						
+						// 如果当前的状态已经连接，那就不需要重复初始化websocket
+						if (CHAT.socket != null 
+							&& CHAT.socket != undefined 
+							&& CHAT.socket.readyState == WebSocket.OPEN) {
+							return false;
+						}
+						
+						CHAT.socket = new WebSocket(appConfig.nettyServiceUrl);
+						CHAT.socket.onopen = CHAT.wsopen,
+						CHAT.socket.onclose = CHAT.wsclose,
+						CHAT.socket.onerror = CHAT.wserror,
+						CHAT.socket.onmessage = CHAT.wsmessage;
+					} else {
+						alert("手机系统过旧，暂不支持websocket！");
+					}
+				},
+				chat: function(msg) {
+					
+					// 如果当前websocket的状态是已打开，则直接发送， 否则重连
+					if (CHAT.socket != null 
+							&& CHAT.socket != undefined  
+							&& CHAT.socket.readyState == WebSocket.OPEN) {
+							CHAT.socket.send(msg);
+						
+					} else {
+						// 重连websocket
+						CHAT.init();
+						setTimeout("CHAT.reChat('" + msg + "')", "1000");
+					}
+					//渲染快照列表进行展示
+					loadingChatSnapshot();
+				},
+				reChat: function(msg) {
+					console.log("消息重新发送...");
+					CHAT.socket.send(msg);
+				},
+				wsopen: function() {
+					// console.log("websocket连接已建立...");
+					
+					var me = utils.getCurrentUser();
+					// 构建ChatMsg
+					var chatMsg = new utils.ChatMsg(me.username, null, null, null);
+					// 构建DataContent
+					var dataContent = new utils.DataContent(utils.CONNECT, chatMsg, null);
+					// 发送websocket
+					CHAT.chat(JSON.stringify(dataContent));
+					
+					// 每次连接之后，获取用户的未读未签收消息列表
+					fetchUnReadMsg();
+					
+					 // 定时发送心跳
+					setInterval("CHAT.keepalive()", 10000);
+				},
+				wsmessage: function(e) {
+					console.log("接受到消息：" + e.data);
+					// 调用websocket 发送消息到netty后端
+
+				
+					
+					// 1、转换DataContent为对象，如果自己发送的好友申请被通过，那么就重新拉取好友列表
+					var dataContent = JSON.parse(e.data);
+					var action = dataContent.action;
+					if (action === utils.PULL_FRIEND) {
+						
+						var friendListWebview = plus.webview.getWebviewById("friend_list.html");
+						
+						friendListWebview.evalJS("fetchFriendList()");
+						return ;						
+					}
+					
+					
+					//2、 获取后端推送过来的消息，并渲染
+					var chatMsg = dataContent.chatMsg;
+					var msg = chatMsg.msg;
+					var friendUsername = chatMsg.senderUsername;
+					var myusername = chatMsg.recipientUsername;
+					var chatWebview = plus.webview.getWebviewById("chatting-" + friendUsername);// 调用聊天webview的receiveMsg方法
+					var isRead = true;	// 设置消息的默认状态为已读
+					if (chatWebview != null) {
+						chatWebview.evalJS("receiveMsg('" + msg + "')");//本地页面渲染
+						chatWebview.evalJS("resizeScreen()");
+					} else {
+						isRead = false;	// chatWebview 聊天页面没有打开，标记消息未读状态
+					}
+					console.log(chatMsg.id);
+ 					// 接受到消息之后，对消息记录进行签收,单个签收
+					var dataContentSign = new utils.DataContent(utils.SIGNED,null,chatMsg.id);
+					console.log(JSON.stringify(dataContentSign));
+					CHAT.chat(JSON.stringify(dataContentSign));
+					
+// 					// 保存聊天历史记录到本地缓存
+					var me = utils.getCurrentUser();
+					utils.saveUserChatHistory(me.username, friendUsername, msg, 2);
+					utils.saveUserChatSnapshot(me.username, friendUsername, msg, isRead);
+					
+					// 渲染快照列表进行展示
+					loadingChatSnapshot();
+				},
+				wsclose: function() {
+					console.log("连接关闭...");
+				},
+				wserror: function() {
+					console.log("发生错误...");
+				},
+				signMsgList: function(unSignedMsgIds) {
+					// 构建批量签收对象的模型
+					var dataContentSign = new utils.DataContent(utils.SIGNED,
+															  null,
+															  unSignedMsgIds);
+					// 发送批量签收的请求
+					CHAT.chat(JSON.stringify(dataContentSign));
+				}
+				,
+				keepalive: function() {
+					// 构建对象
+					var dataContent = new utils.DataContent(utils.KEEPALIVE, null, null);
+					// 发送心跳
+					CHAT.chat(JSON.stringify(dataContent));
+					
+					// 定时执行函数
+					fetchUnReadMsg();
+					//定时去更新本地的好友列表
+					var friendListWebview = plus.webview.getWebviewById("friend_list.html");
+					friendListWebview.evalJS("fetchFriendList()");
+				}
+			};
+			//----------------聊天业务end---------------------
+			
+			// 每次重连后获取服务器的未签收消息
+			function fetchUnReadMsg() {
+				var currentUser = utils.getCurrentUser();
+				var msgUsernames = ",";	// 格式：  ,aaa,bbb,ccc,
+				mui.ajax(appConfig.serviceUrl + "/msg/queryMsg/"+currentUser.username,{
+					data:{},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					headers:{'Content-Type':'application/json'},	              
+					success:function(resp){
+						
+						if (resp.code == "200") {
+							var unReadMsgList = resp.data.msgXxList;
+							var msgIds = "";
+							console.log(JSON.stringify(unReadMsgList));
 							
+							// 1. 保存聊天记录到本地
+							// 2. 保存聊天快照到本地
+							// 3. 对这些未签收的消息，批量签收
+							
+							for (var i = unReadMsgList.length-1 ; i >= 0 ; i--) {
+								var msgObj = unReadMsgList[i];
+								// 逐条存入聊天记录,2表示是朋友发送给我的
+								utils.saveUserChatHistory(msgObj.recipientUsername, 
+														msgObj.senderUsername, 
+														msgObj.msg, 2); 
+								console.log(msgObj.msg);
+								// 拼接批量接受的消息id字符串，逗号间隔
+								// 存入聊天快照,
+								utils.saveUserChatSnapshot(msgObj.recipientUsername, 
+														 msgObj.senderUsername, 
+														 msgObj.msg, false);
 								
-								// 转换DataContent为对象
-			// 					var dataContent = JSON.parse(e.data);
-			// 					var action = dataContent.action;
-			// 					if (action === app.PULL_FRIEND) {
-			// 						fetchContactList();
-			// 						return false;						
-			// 					}
+								msgIds += msgObj.id;
+								msgIds += ",";
+							}
+							
+							if(unReadMsgList.length>0){
 								
-			// 					// 如果不是重新拉取好友列表，则获取聊天消息模型，渲染接收到的聊天记录
-			// 					var chatMsg = dataContent.chatMsg;
-			// 					var msg = chatMsg.msg;
-			// 					var friendUserId = chatMsg.senderId;
-			// 					var myId = chatMsg.receiverId;
-								
-			// 					// 调用聊天webview的receiveMsg方法
-			// //					var chatWebview = plus.webview.getWebviewById("chatting-180718GA2ZM9N5S8");
-			// 					var chatWebview = plus.webview.getWebviewById("chatting-" + friendUserId);
-			// 					var isRead = true;	// 设置消息的默认状态为已读
-			// 					if (chatWebview != null) {
-			// 						chatWebview.evalJS("receiveMsg('" + msg + "')");
-			// 						chatWebview.evalJS("resizeScreen()");
-			// 					} else {
-			// 						isRead = false;	// chatWebview 聊天页面没有打开，标记消息未读状态
-			// 					}
-								
-			// 					// 接受到消息之后，对消息记录进行签收
-			// 					var dataContentSign = new app.DataContent(app.SIGNED, null, chatMsg.msgId);
-			// 					CHAT.chat(JSON.stringify(dataContentSign));
-								
-			// 					// 保存聊天历史记录到本地缓存
-			// 					app.saveUserChatHistory(myId, friendUserId, msg, 2);
-			// 					app.saveUserChatSnapshot(myId, friendUserId, msg, isRead);
-			// 					// 渲染快照列表进行展示
-			// 					loadingChatSnapshot();
-							},
-							wsclose: function() {
-								console.log("连接关闭...");
-							},
-							wserror: function() {
-								console.log("发生错误...");
-							},
-							// signMsgList: function(unSignedMsgIds) {
-							// 	// 构建批量签收对象的模型
-							// 	var dataContentSign = new app.DataContent(app.SIGNED,
-							// 											  null,
-							// 											  unSignedMsgIds);
-							// 	// 发送批量签收的请求
-							// 	CHAT.chat(JSON.stringify(dataContentSign));
-							// },
-							// keepalive: function() {
-							// 	// 构建对象
-							// 	var dataContent = new app.DataContent(app.KEEPALIVE, null, null);
-							// 	// 发送心跳
-							// 	CHAT.chat(JSON.stringify(dataContent));
-								
-							// 	// 定时执行函数
-							// 	fetchUnReadMsg();
-							// 	fetchContactList();
-							// }
-						};
-					//----------------聊天业务end---------------------
+								utils.saveUserChatSnapshot(unReadMsgList[0].recipientUsername,
+														 unReadMsgList[0].senderUsername, 
+														 unReadMsgList[0].msg, false);
+							}
+							
+							
+							// 调用批量签收的方法
+							CHAT.signMsgList(msgIds);
+							// 刷新快照
+							loadingChatSnapshot();
+						}
+					}
+				});
+			}
+			
+			// 展示聊天快照，渲染列表
+			function loadingChatSnapshot() {
+				var currentUser = utils.getCurrentUser();
+				var chatSnapshotList = utils.getUserChatSnapshot(currentUser.username);
+				
+				var chatItemHtml = "";
+				var ul_chatSnapshot = document.getElementById("ul_chatSnapshot");
+				ul_chatSnapshot.innerHTML = "";
+				for (var i = 0 ; i < chatSnapshotList.length ; i ++) {
+					var chatItem = chatSnapshotList[i];
+					
+					var friendUsername = chatItem.friendUsername;
+					// 根据friendId从本地联系人列表的缓存中拿到相关信息
+					var friend = utils.getFriendFromFriendList(friendUsername);
+					
+					// 判断消息的已读或未读状态
+					var isRead = chatItem.isRead;
+					var readHtmlBefore = '';
+					var readHtmlAfter = '';
+					if (!isRead) {
+						readHtmlBefore = '<span class="red-point">';
+						readHtmlAfter = '</span>';
+					}
+					
+					chatItemHtml =  '<li friendUsername="' + friendUsername + '" friendNickname="' + friend.friendNickname + '" friendFaceImage="' + friend.friendFaceImg + '" class="chat-with-friend mui-table-view-cell mui-media">' +
+										'<div class="mui-slider-right mui-disabled">' +
+											'<a id="link_delChatRecord" friendUsername="' + friendUsername + '" class="mui-btn mui-btn-red">删除</a>' +
+										'</div>' +
+										'<div class="mui-slider-handle mui-media-body ">' +
+								            '<img class="mui-media-object mui-pull-left" src="' + appConfig.imgServiceUrl + friend.friendFaceImg + '"/>' +
+								            	readHtmlBefore + friend.friendNickname + readHtmlAfter + 
+								            '<p class="mui-ellipsis">' + chatItem.msg + '</p>' +
+							            '</div>' +
+								    '</li>';
+					ul_chatSnapshot.insertAdjacentHTML('beforeend', chatItemHtml);
+				}
+				
+			}
 		</script>
 	</body>
 
