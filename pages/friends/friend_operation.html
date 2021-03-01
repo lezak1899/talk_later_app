@@ -39,10 +39,9 @@
 			
 			<br />
 			<div style="text-align: center;">
-				<button id="btn_add_friend" type="button" class="mui-btn mui-btn-block" 
-					style="color: white;width: 90%;display: inline;padding: 12px 0">添加好友</button>
-				<button id="btn_back" type="button" class="mui-btn mui-btn-block" 
-					style="width: 90%;display: inline;padding: 12px 0">返回</button>
+				<button id="btn_del_friend" type="button" class="mui-btn mui-btn-block mui-btn-danger" 
+					style="color: white;width: 90%;display: inline;padding: 12px 0">删除好友</button>
+
 			</div>
 			
 		</div>
@@ -76,30 +75,40 @@
 				lab_friend_nickname.innerHTML=friendNickname;
 				p_friend_username.innerHTML=friendUsername;
 				p_friend_funSignature.innerHTML=friendFunSignature;
-				var btn_back = document.getElementById("btn_back");
-				btn_back.addEventListener("tap",function(){
-					mui.back();
-				})
-				
-				var btn_add_friend = document.getElementById("btn_add_friend");
+
+			
+			
+				var btn_add_friend = document.getElementById("btn_del_friend");
 				btn_add_friend.addEventListener("tap",function(){
-					mui.ajax(appConfig.serviceUrl+"/request/sendRequest?senderUsername="+currentUser.username,{
+					plus.nativeUI.showWaiting("请稍等。。。");
+					mui.ajax(appConfig.serviceUrl+"/friendref/delFriend/"+currentUser.username+"/"+friendUsername,{
 						data:{
-							"senderUsername":currentUser.username,
-							"recipientUsername":friendUsername
 						},
 						dataType:'json',//服务器返回json格式数据
 						type:'post',//HTTP请求类型
 						timeout:10000,//超时时间设置为10秒；
 						headers:{'Content-Type':'application/json'},	              
 						success:function(resp){
-							plus.nativeUI.closeWaiting();	
-							if(resp.code=="200"){		
-								mui.alert("请求发送成功！")
-								mui.back();
+							plus.nativeUI.closeWaiting();
+							
+							if(resp.code=="200"){
+								utils.popUpToast("删除成功！");
+								//重新渲染好友列表
+								var friendListWebview = plus.webview.getWebviewById("friend_list.html");
+								friendListWebview.evalJS("fetchFriendList()");
+								//删除聊天历史记录
+								utils.deleteUserChatHistory(currentUser.username,friendUsername);
+								//删除快照记录，并重新渲染
+								utils.deleteUserChatSnapshot(currentUser.username,friendUsername);
+								var chatList = plus.webview.getWebviewById("chat_list.html");
+								chatList.evalJS("loadingChatSnapshot()");
+								
+								mui.openWindow('../../index.html','index.html');
+								
 							}
 							else{
-								mui.alert("请求发送失败，"+resp.message);
+								
+								utils.popUpToast("删除失败，请稍后再试！")
 							}	
 						},
 						error:function(xhr,type,errorThrown){

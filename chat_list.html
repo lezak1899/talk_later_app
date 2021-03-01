@@ -36,34 +36,14 @@
 		<div class="mui-content">
 			<ul id="ul_chatSnapshot" class="mui-table-view">
 			
-			   <li class="mui-table-view-cell mui-media">
+<!-- 			   <li class="mui-table-view-cell mui-media">
 		            <div class="mui-media-body">
 			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
 			            	甲
 			            <p class="mui-ellipsis">这里是聊天内容...</p>
 		            </div>
-			    </li>
-			    <li class="mui-table-view-cell mui-media">
-		            <div class="mui-media-body">
-			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
-			            	乙
-			            <p class="mui-ellipsis">这里是聊天内容...</p>
-		            </div>
-			    </li>
-			    <li class="mui-table-view-cell mui-media">
-		            <div class="mui-media-body">
-			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
-			            	丙
-			            <p class="mui-ellipsis">这里是聊天内容...</p>
-		            </div>
-			    </li>
-			    <li class="mui-table-view-cell mui-media">
-		            <div class="mui-media-body">
-			            <img class="mui-media-object mui-pull-left" src="image/face-default-cat.png"/>
-			            	丁
-			            <p class="mui-ellipsis">这里是聊天内容...</p>
-		            </div>
-			    </li>
+			    </li> -->
+			
 			</ul>
 		</div>
 		
@@ -79,8 +59,6 @@
 				// 左滑删除聊天快照和记录
 				mui("#ul_chatSnapshot").on("tap", "#link_delChatRecord", function(e){
 					var me = this;	// a 标签
-					
-					
 					
 					// 获取朋友id
 					var friendUsername = me.getAttribute("friendUsername");
@@ -183,24 +161,37 @@
 					fetchUnReadMsg();
 					
 					 // 定时发送心跳
-					setInterval("CHAT.keepalive()", 10000);
+					// setInterval("CHAT.keepalive()", 10000);
 				},
 				wsmessage: function(e) {
-					console.log("接受到消息：" + e.data);
+					// console.log("接受到消息：" + e.data);
 					// 调用websocket 发送消息到netty后端
-
-				
 					
-					// 1、转换DataContent为对象，如果自己发送的好友申请被通过，那么就重新拉取好友列表
+					/**
+					 * 1、转换DataContent为对象，如果自己发送的好友申请被通过，或者对方删除好友
+					 * 那么就重新拉取好友列表，并且重置和该好友的历史记录
+					 */
+					var currentUser = utils.getCurrentUser();
 					var dataContent = JSON.parse(e.data);
 					var action = dataContent.action;
-					if (action === utils.PULL_FRIEND) {
-						
+					if (action === utils.PULL_FRIEND) {		
 						var friendListWebview = plus.webview.getWebviewById("friend_list.html");
-						
 						friendListWebview.evalJS("fetchFriendList()");
+						//删除重置历史记录
+					
+						if(JSON.stringify(dataContent.chatMsg)!="{}"){
+								
+							//删除聊天记录
+							utils.deleteUserChatHistory(currentUser.username,dataContent.chatMsg.senderUsername);
+							//删除快照信息，并重新渲染
+							utils.deleteUserChatSnapshot(currentUser.username,dataContent.chatMsg.senderUsername);
+							var chatList = plus.webview.getWebviewById("chat_list.html");
+							chatList.evalJS("loadingChatSnapshot()");
+						}
 						return ;						
 					}
+					
+			
 					
 					
 					//2、 获取后端推送过来的消息，并渲染

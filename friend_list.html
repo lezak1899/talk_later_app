@@ -230,7 +230,7 @@
 					headers:{'Content-Type':'application/json'},	              
 					success:function(resp){
 						
-						console.log(JSON.stringify(resp));
+	
 						if (resp.code == 200) {
 							var friendList = resp.data.friendsRefVoList;
 							utils.setFriendList(friendList);
