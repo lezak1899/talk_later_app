@@ -20,27 +20,17 @@
 			}
 		</style>
 	</head>
-	
 		<body contextmenu="return false;">
-		
-<!-- 			<header class="mui-bar mui-bar-nav title" style="position: fixed;">
-				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left title-color"></a>
-				<h1 class="mui-title title-color"><b id="chatting-nickname">回聊</b></h1>
-			</header> -->
 			<header class="mui-bar mui-bar-nav title-color">
 				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color: white;"></a>
 				<h1 id="chatting-nickname" class="mui-title " style="color: white;">回聊</h1>
 				<a id="friend_operation" class="mui-icon mui-icon-right-nav mui-pull-right" style="color: white;">…</a>
 			</header>
-		
 			<div id="msg-outter" class="mui-content">
-				<div id='msg'>
-					
-					<!-- 消息渲染 -->
-							
+				<div id='msg'>	
+					<!-- 消息渲染 -->	
 				</div>
 			</div>
-			
 			<footer>
 				<div class="footer-center">
 					<textarea id='msg-text' type="text" class='input-text'></textarea>
@@ -77,10 +67,7 @@
 				
 				// 标题改为朋友的昵称
 				document.getElementById("chatting-nickname").innerHTML = friendNickname;
-				
-				
-				
-				
+
 				// 渲染初始化的聊天记录HTML
 				initChatHistory();
 				
@@ -154,7 +141,7 @@
 					/**
 					 * 5、保存聊天历史记录到本地缓存，并保存快照到缓存中
 					 */ 
-					utils.saveUserChatHistory(currentUser.username, friendUsername, msg_text_val, 2);
+					utils.saveUserChatHistory(currentUser.username, friendUsername, msg_text_val, 1);
 					utils.saveUserChatSnapshot(currentUser.username, friendUsername, msg_text_val, true);
 				
 					/**
@@ -236,22 +223,16 @@
 			};
 			// 初始化用户的聊天记录
 			function initChatHistory() {
-				// var friendUsername;
-				// var friendNickname;
-				// var friendFaceImage;
-				var msg_list = document.getElementById("msg");
-				
+				var msg_list = document.getElementById("msg");		
 				var me = utils.getCurrentUser();
 				var myUsername = me.username;
 				var myFaceImg = me.faceImg;
-			
 				var chatHistoryList = utils.getUserChatHistory(myUsername, friendUsername);
-				
 				var togetherHTML = "";
 				
 				for (var i = 0 ; i < chatHistoryList.length ; i ++) {
 					var singleMsg = chatHistoryList[i];
-					if (singleMsg.flag == 1) {
+					if (singleMsg.flag == 1) {//判断本条消息是我发送的，还是朋友发送的，1:我  2:朋友
 						togetherHTML += '<div class="me_lists">' +
 									'<div class="header_img">' +
 										'<img src="' + appConfig.imgServiceUrl + myFaceImg + '" width="40px" height="40px" />' +

@@ -127,12 +127,19 @@
 					mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
 						if(e.index==1){//'取消'按钮下标为0.确认按钮下标为1
 						
-						plus.storage.clearAsync(function(){
+						plus.storage.removeItemAsync("currentUser",function(){
 								console.log("clearAsync success");
 								plus.runtime.restart();
 							}, function(e){
 								console.log("clearAsync failed: "+JSON.stringify(e));
 							});
+						
+						// plus.storage.clearAsync(function(){
+						// 		console.log("clearAsync success");
+						// 		plus.runtime.restart();
+						// 	}, function(e){
+						// 		console.log("clearAsync failed: "+JSON.stringify(e));
+						// 	});
 
 						}
 					},'div')

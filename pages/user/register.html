@@ -29,7 +29,7 @@
 				
 				<div class="mui-input-row">
 				    <label>个性签名</label>
-				    <input id="fun_signature" type="password" class="mui-input-clear verify" placeholder="请输入个性签名">
+				    <input id="fun_signature" type="text" class="mui-input-clear verify" placeholder="请输入个性签名">
 				</div>
 			
 			    <div class="mui-input-row">
@@ -96,7 +96,8 @@
 								username:username.value,
 								nickname:nickname.value,
 								funSignature:fun_signature.value,
-								password:password.value
+								password:password.value,
+								usertype:'1',
 							},
 							dataType:'json',//服务器返回json格式数据
 							type:'post',//HTTP请求类型
