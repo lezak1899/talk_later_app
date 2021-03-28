@@ -21,6 +21,9 @@
 						</div>
 					</a>
 				</li>
+			</ul>
+				<br/>
+				<ul class="mui-table-view">
 				<li class="mui-table-view-cell mui-media">
 					<a id="link_nickname"  href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright"
@@ -41,12 +44,15 @@
 					</a>	
 				</li>
 				<li class="mui-table-view-cell mui-media">
-					<a href="javascript:;">
-						<span id="my_signature" class="mui-pull-right" style="font-size: 14px;color: gray;margin-right: 10px;"></span>
+					<a id="link_signature"  href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-arrowright"
+						style="color: lightgray;margin-right: 3px;"></span>
+						<span id="my_signature" class="mui-pull-right" 
+						style="font-size: 14px;color: gray;"></span>
 						<div class="mui-media-body" style="font-size: 16px;">
-							签名
+							修改个性签名
 						</div>
-					</a>	
+					</a>
 				</li>
 				<li class="mui-table-view-cell mui-media">
 					<a id="link_password"  href="javascript:;">
@@ -69,6 +75,15 @@
 						</div>
 					</a>
 				</li>
+				<li class="mui-table-view-cell mui-media">
+					<a id="link_clear_cache" href="javascript:;">
+						<span class="mui-pull-right mui-icon mui-icon-loop" 
+						style="margin-right: 3px;"></span>
+						<div class="mui-media-body" style="font-size: 16px;line-height: 35px;">
+							清除缓存
+						</div>
+					</a>
+				</li>
 			</ul>
 			<br />
 			
@@ -88,7 +103,8 @@
 		<script src="js/utils.js"></script>
 		<script src="js/appConfig.js"></script>
 		<script type="text/javascript">
-			mui.init()
+			mui.init();
+	
 			
 			mui.plusReady(function () {
 				
@@ -109,6 +125,12 @@
 					mui.openWindow("/pages/user/modify_nickname.html");
 				})
 				
+				//修改个性签名
+				var link_signature = document.getElementById("link_signature");
+				link_signature.addEventListener("tap",function(){
+					mui.openWindow("/pages/user/modify_signature.html");
+				})
+				
 				//修改密码
 				var link_password = document.getElementById("link_password");
 				link_password.addEventListener("tap",function(){
@@ -118,7 +140,18 @@
 				//刷新用户中心页面的值,当切换到用户中心界面时触发
 				var personCenterWebView=plus.webview.currentWebview();
 				personCenterWebView.addEventListener("show",function(){
-					refreshUserInfo()
+					refreshUserInfo();
+				})
+				//link_clear_cache 清除缓存
+				var link_clear_cache = document.getElementById("link_clear_cache");
+				link_clear_cache.addEventListener("tap",function(){
+					mui.confirm("是否清除所有缓存信息", "系统提示",['取消','确认'],function (e) {
+						if(e.index==1){//'取消'按钮下标为0.确认按钮下标为1
+							utils.clear_cache();
+							var wsWebview = plus.webview.getWebviewById("chat_list.html");
+							wsWebview.evalJS("loadingChatSnapshot()");	
+						}
+					},'div')
 				})
 			
 				//退出登录
@@ -126,28 +159,16 @@
 					
 					mui.confirm("是否退出当前登录用户", "系统提示",['取消','确认'],function (e) {
 						if(e.index==1){//'取消'按钮下标为0.确认按钮下标为1
-						
-						plus.storage.removeItemAsync("currentUser",function(){
-								console.log("clearAsync success");
-								plus.runtime.restart();
-							}, function(e){
-								console.log("clearAsync failed: "+JSON.stringify(e));
-							});
-						
-						// plus.storage.clearAsync(function(){
-						// 		console.log("clearAsync success");
-						// 		plus.runtime.restart();
-						// 	}, function(e){
-						// 		console.log("clearAsync failed: "+JSON.stringify(e));
-						// 	});
-
+							utils.logout();
 						}
 					},'div')
-				
-						
-					
+			
 				}) 
 			
+			});
+			
+			window.addEventListener('refresh', function(e){//执行刷新
+			    refreshUserInfo();
 			});
 			
 			function refreshUserInfo(){

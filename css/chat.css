@@ -1,4 +1,4 @@
-﻿/*图片气泡*/
+/*图片气泡*/
 .friend_lists {
 	margin: 0 50px 0px 10px;
 	position: relative;
@@ -30,11 +30,16 @@
 .msg-left-white {
 	background-color: #FFFFFF;
 	font-size: 16px;
+	max-width: 500px;
+	word-break: break-all;
 }
 
 .msg-right-green {
 	background-color: #a0e759;
 	font-size: 16px;
+	max-width: 500px;
+	word-break: break-all;
+	text-align: left;
 }
 
 .msg-wrapper p {

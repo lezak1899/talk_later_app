@@ -6,6 +6,8 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/mui/mui.picker.css" rel="stylesheet" />
+		<link href="../../css/mui/mui.poppicker.css" rel="stylesheet" />
 		<link rel="stylesheet" type="text/css" href="../../css/header.css" />
 	</head>
 	
@@ -31,6 +33,11 @@
 				    <label>个性签名</label>
 				    <input id="fun_signature" type="text" class="mui-input-clear verify" placeholder="请输入个性签名">
 				</div>
+				
+				<div class="mui-input-row" id="sex_selection">
+				    <label>性别</label>
+					<input id="sex" type="text" class="mui-input-clear verify" placeholder="请选择性别">
+				</div>
 			
 			    <div class="mui-input-row">
 			        <label>密码</label>
@@ -52,6 +59,8 @@
 
 	<body>
 		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui/mui.picker.js"></script>
+		<script src="../../js/mui/mui.poppicker.js"></script>
 		<script src="../../js/utils.js"></script>
 		<script src="../../js/appConfig.js"></script>
 		<script src="../../js/jquery-3.0.0.js"></script>
@@ -62,9 +71,23 @@
 				var nickname=document.getElementById("nickname");
 				var fun_signature=document.getElementById("fun_signature");
 				var password=document.getElementById("password");
+				var sex=document.getElementById("sex");
 				var confirm_password=document.getElementById("confirm_password");
 				var submit_button=document.getElementById("submit_button");
 				var reset_button=document.getElementById("reset_button");
+				
+				var sex_selection=document.getElementById("sex_selection");
+				
+				sex_selection.addEventListener("tap",function(e){
+					  var picker = new mui.PopPicker();
+					  picker.setData([{value:'男',text:'男'},{value:'女',text:'女'}]);
+					  picker.show(function (selectItems) {
+			
+						 sex.value=selectItems[0].text;
+
+					   })
+				})
+				
 				
 				
 				reset_button.addEventListener("tap",function(e){
@@ -97,6 +120,7 @@
 								nickname:nickname.value,
 								funSignature:fun_signature.value,
 								password:password.value,
+								sex:sex.value,
 								usertype:'1',
 							},
 							dataType:'json',//服务器返回json格式数据

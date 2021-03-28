@@ -149,6 +149,12 @@
 					 */ 
 					msg_text.value = "";
 					send.setAttribute("class", "mui-btn-gray");
+					/**
+					 * 7、重新调整窗口高度
+					 */ 
+					resizeScreen();
+					
+					
 				})
 				
 				// 对当前的窗口监听resize事件
@@ -170,7 +176,6 @@
 			
 			// 在页面渲染聊天信息
 			function renderMsg(faceImg, msg) {
-				
 				var msgHtml = '<div class="me_lists">' +
 								'<div class="header_img">' +
 									'<img src="' + faceImg + '" width="40px" height="40px" />' +
@@ -184,7 +189,6 @@
 				
 				playSendMsgSound();
 			}
-			
 			// 接受消息
 			function receiveMsg(msg) {
 				
@@ -196,7 +200,7 @@
 										'<p class="msg-left-white">' + msg + '</p>' +
 									'</div>' +
 							  '</div>'; 
-				
+							
 				var msg_list = document.getElementById("msg");
 				msg_list.insertAdjacentHTML("beforeend", msgHtml);
 				

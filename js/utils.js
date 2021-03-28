@@ -53,6 +53,7 @@ window.utils = {
 		var str= plus.storage.getItem("currentUser")
 		return JSON.parse(str);
 	},
+	
 	/**
 	 * 通过缓存重新登录
 	 * @return {Object} 
@@ -63,6 +64,33 @@ window.utils = {
 		if(currentUser!=null){
 			mui.openWindow("index.html");
 		}
+	},
+	/**
+	 * 退出登录
+	 * @return {Object} 
+	
+	 */
+	logout:function(){
+		plus.storage.removeItemAsync("currentUser",function(){
+				console.log("clearAsync success");
+				plus.runtime.restart();
+			}, function(e){
+				console.log("clearAsync failed: "+JSON.stringify(e));
+			});
+	},
+	/**
+	 * 退出登录
+	 * @return {Object} 
+	
+	 */
+	clear_cache:function(){
+		var currentUser =  this.getCurrentUser();
+		plus.storage.clearAsync(function(){
+				console.log("clearAsync success");
+			}, function(e){
+				console.log("clearAsync failed: "+JSON.stringify(e));
+			});
+		this.setCurrentUser(currentUser);
 	},
 
 	/**

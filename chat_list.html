@@ -192,8 +192,6 @@
 					}
 					
 			
-					
-					
 					//2、 获取后端推送过来的消息，并渲染
 					var chatMsg = dataContent.chatMsg;
 					var msg = chatMsg.msg;
@@ -266,7 +264,7 @@
 						if (resp.code == "200") {
 							var unReadMsgList = resp.data.msgXxList;
 							var msgIds = "";
-							console.log(JSON.stringify(unReadMsgList));
+							// console.log(JSON.stringify(unReadMsgList));
 							
 							// 1. 保存聊天记录到本地
 							// 2. 保存聊天快照到本地
