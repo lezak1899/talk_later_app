@@ -99,6 +99,7 @@
 				
 				submit_button.addEventListener("tap",function(e){
 					
+					
 					mui(".verify").each(function() {
 					//若当前input为空，则alert提醒 
 					if(!this.value || this.value.trim() == "") {
@@ -133,7 +134,7 @@
 								if(resp.code=="200"){
 									mui.confirm("注册成功，是否跳转登录页面", "系统提示",['取消','确认'],function (e) {
 										if(e.index==1){//'取消'按钮下标为1.确认按钮下标为2
-											$(".verify").val("");
+										    $(".verify").val("");//重置表单
 											mui.openWindow("../../login.html");
 										}else{
 											location.reload();
@@ -143,15 +144,14 @@
 									
 								}
 								else{
-									mui.alert("注册失败,"+resp.message);
-									
+									utils.popUpToast("注册失败,"+resp.message);
 								}	
 							},
 							error:function(xhr,type,errorThrown){
 								plus.nativeUI.closeWaiting();
 								//异常处理；
-								mui.alert("服务端发生错误，请联系管理员！");
-								console.log(type);
+								utils.popUpToast("服务端发生错误，请联系管理员!");
+							
 							}
 						});
 						//使原来form表单的提交失效

@@ -15,7 +15,4 @@ window.appConfig = {
 	imgServiceUrl: 'https://talk-later-file.oss-cn-guangzhou.aliyuncs.com/'
 	
 	
-	
-	
-	
 }	
