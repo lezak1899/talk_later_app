@@ -15,7 +15,7 @@
 					<a id="link_face_img" href="javascript:;">
 						<span class="mui-pull-right mui-icon mui-icon-arrowright" 
 						style="line-height: 50px;color: lightgray;margin-right: 3px;"></span>
-						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;" src="">
+						<img id="my_face_img" class="mui-media-object mui-pull-right" style="line-height: 50xp;border-radius: 10%;" src="">
 						<div class="mui-media-body" style="line-height: 50px;font-size: 16px;">
 							头像	
 						</div>
@@ -107,6 +107,12 @@
 	
 			
 			mui.plusReady(function () {
+				var currentUser = utils.getCurrentUser();
+				var my_face_img = document.getElementById("my_face_img");
+				
+				refreshUserInfo();
+				// my_face_img = appConfig.imgServiceUrl+currentUser.faceImg;
+				
 				
 				//查看二维码
 				var link_qrcode = document.getElementById("link_qrcode");
@@ -168,6 +174,7 @@
 			});
 			
 			window.addEventListener('refresh', function(e){//执行刷新
+			    
 			    refreshUserInfo();
 			});
 			
@@ -177,7 +184,6 @@
 				var my_nickname = document.getElementById("my_nickname");
 				var my_username = document.getElementById("my_username");
 				var my_signature = document.getElementById("my_signature");
-				// console.log(JSON.stringify(currentUser));
 				my_nickname.innerHTML = currentUser.nickname;
 				my_username.innerHTML = currentUser.username;
 				my_signature.innerHTML = currentUser.funSignature;

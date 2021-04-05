@@ -156,9 +156,6 @@
 			// 从缓存中获取联系人列表，并且渲染到页面
 			function renderContactPage() {
 				
-				// if(utils.getFriendList() === null){
-				// 	fetchFriendList();
-				// }
 				
 				// 1. 获取联系人列表
 				var friendList = utils.getFriendList();
@@ -184,9 +181,10 @@
 						var nicknameStarter = enWords[i];
 						contactHtml += '<li data-group="' + nicknameStarter + '" class="mui-table-view-divider mui-indexed-list-group">' + nicknameStarter + '</li>';
 						for (var j = 0 ; j < friendArray.length ; j ++ ) {
+							console.log(appConfig.imgServiceUrl + friendArray[j].friendFaceImg);
 							contactHtml += '' +
 										'<li friendUsername="' + friendArray[j].friendUsername + '" friendNickname="' + friendArray[j].friendNickname + '" friendFaceImage="' + friendArray[j].friendFaceImg + '" class="chat-with-friend mui-media mui-table-view-cell mui-indexed-list-item" style="padding: 8px 10px;">' +
-											'<img class="mui-media-object mui-pull-left" style="max-width: 35px;height: 35px;" src="' + appConfig.imgServiceUrl + friendArray[j].friendFaceImg + '"/>' +
+											'<img class="mui-media-object mui-pull-left" style="max-width: 35px;height: 35px;border-radius: 10%;" src="' + appConfig.imgServiceUrl + friendArray[j].friendFaceImg + '"/>' +
 											'<div class="mui-media-body" style="line-height: 35px;">' + friendArray[j].friendNickname + '</div>' +
 										'</li>';
 						}

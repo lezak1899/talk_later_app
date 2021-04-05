@@ -75,6 +75,7 @@ window.utils = {
 				console.log("clearAsync success");
 				plus.runtime.restart();
 			}, function(e){
+				plus.runtime.restart();
 				console.log("clearAsync failed: "+JSON.stringify(e));
 			});
 	},

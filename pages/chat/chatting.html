@@ -153,8 +153,7 @@
 					 * 7、重新调整窗口高度
 					 */ 
 					resizeScreen();
-					
-					
+				
 				})
 				
 				// 对当前的窗口监听resize事件
@@ -229,6 +228,7 @@
 			function initChatHistory() {
 				var msg_list = document.getElementById("msg");		
 				var me = utils.getCurrentUser();
+				if(me ==null) return;
 				var myUsername = me.username;
 				var myFaceImg = me.faceImg;
 				var chatHistoryList = utils.getUserChatHistory(myUsername, friendUsername);

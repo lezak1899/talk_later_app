@@ -48,10 +48,11 @@
 				    <label>密码</label>
 				    <input id="confirm_password" type="password" class="mui-input-password verify" placeholder="请再次输入确认密码">
 				</div>
-			    <div class="mui-button-row">
-			        <button id="submit_button" type="button" class="mui-btn mui-btn-primary" >确认</button>
-			        <button id="reset_button" type="button" class="mui-btn mui-btn-danger" >重置</button>
-			    </div>
+				
+				<div id="bottom" style="position:fixed;bottom:0;display: flex;width: 100%;">
+				    <button id="submit_button" type="button" style="height: 50px;flex:1;background-color: #EB3D72;color: white;">确认</button>
+				    <button id="reset_button" type="button"  style="height: 50px;flex:1;background-color:#FED150;color:white">重置</button>
+				</div>
 			</form>
 		
 		</div>
@@ -87,16 +88,11 @@
 
 					   })
 				})
-				
-				
-				
+					
 				reset_button.addEventListener("tap",function(e){
 					location.reload();
 				})
-				
-
-				
-				
+			
 				submit_button.addEventListener("tap",function(e){
 					
 					
