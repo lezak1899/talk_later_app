@@ -121,7 +121,7 @@
 					/**
 					 * 2、校验消息文本，判断消息内容，如果长度等于0，则return
 					 */ 
-					var msg_text_val = msg_text.value;
+					var msg_text_val = msg_text.value.trim();
 					if (msg_text_val.length === 0) {
 						utils.popUpToast("不能发送空白信息！", "error");
 						return;
@@ -203,7 +203,7 @@
 				var msg_list = document.getElementById("msg");
 				msg_list.insertAdjacentHTML("beforeend", msgHtml);
 				
-				playReceiveMsgSound();
+				// playReceiveMsgSound();
 			}
 			
 			// 播放发送消息的铃声

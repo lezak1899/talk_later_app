@@ -45,7 +45,7 @@
 			    </div>
 				
 				<div class="mui-input-row">
-				    <label>密码</label>
+				    <label>确认密码</label>
 				    <input id="confirm_password" type="password" class="mui-input-password verify" placeholder="请再次输入确认密码">
 				</div>
 				
@@ -95,19 +95,25 @@
 			
 				submit_button.addEventListener("tap",function(e){
 					
-					
+					var verifyFlag = 1;
 					mui(".verify").each(function() {
 					//若当前input为空，则alert提醒 
-					if(!this.value || this.value.trim() == "") {
-					    var label = this.previousElementSibling;
-					    mui.alert(label.innerText + "不允许为空！");
-					    return ;
-					}
+						if(!this.value || this.value.trim() == "") {
+							var label = this.previousElementSibling;
+							mui.alert(label.innerText + "不允许为空！");
+							flag=0;
+							return false;
+						}
+						
 					}); 
+					if(flag==0){
+						return false;
+					}
+					
 					if(password.value!=confirm_password.value){
 						var label = this.previousElementSibling;
 						mui.alert("两次输入密码不一致！");
-						return ;
+						return false;
 					}
 					
 					plus.nativeUI.showWaiting("请稍等。。。");
