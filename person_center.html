@@ -151,11 +151,12 @@
 				//link_clear_cache 清除缓存
 				var link_clear_cache = document.getElementById("link_clear_cache");
 				link_clear_cache.addEventListener("tap",function(){
-					mui.confirm("是否清除所有缓存信息", "系统提示",['取消','确认'],function (e) {
+					mui.confirm("是否清除所有缓存信息,该操作需要重新登录！", "系统提示",['取消','确认'],function (e) {
 						if(e.index==1){//'取消'按钮下标为0.确认按钮下标为1
 							utils.clear_cache();
-							var wsWebview = plus.webview.getWebviewById("chat_list.html");
-							wsWebview.evalJS("loadingChatSnapshot()");	
+							// var wsWebview = plus.webview.getWebviewById("chat_list.html");
+							// wsWebview.evalJS("loadingChatSnapshot()");	
+							utils.logout();
 						}
 					},'div')
 				})

@@ -172,7 +172,6 @@
 				// 设置聊天记录进入页面的时候自动滚动到最后一条
 				areaMsgList.scrollTop = areaMsgList.scrollHeight + areaMsgList.offsetHeight;
 			};
-			
 			// 在页面渲染聊天信息
 			function renderMsg(faceImg, msg) {
 				var msgHtml = '<div class="me_lists">' +
@@ -185,12 +184,9 @@
 							  '</div>';
 				var msg_list = document.getElementById("msg");
 				msg_list.insertAdjacentHTML("beforeend", msgHtml);
-				
-				playSendMsgSound();
 			}
 			// 接受消息
 			function receiveMsg(msg) {
-				
 				var msgHtml = '<div class="friend_lists">' +
 									'<div class="header_img">' +
 										'<img src="' + appConfig.imgServiceUrl + friendFaceImage + '" width="40px" height="40px" />' +
@@ -198,25 +194,13 @@
 									'<div class="msg-wrapper right">' +
 										'<p class="msg-left-white">' + msg + '</p>' +
 									'</div>' +
-							  '</div>'; 
-							
+							  '</div>'; 	
 				var msg_list = document.getElementById("msg");
 				msg_list.insertAdjacentHTML("beforeend", msgHtml);
 				
-				// playReceiveMsgSound();
 			}
 			
-			// 播放发送消息的铃声
-			function playSendMsgSound() {
-				var audioPlayer = plus.audio.createPlayer("../../static/mp3/send.mp3");
-				audioPlayer.play();
-			}
-			
-			// 播放接受消息的铃声
-			function playReceiveMsgSound() {
-				var audioPlayer = plus.audio.createPlayer("../../mp3/di_didi.mp3");
-				audioPlayer.play();
-			}
+
 
 			// 重新调整聊天窗口
 			function resizeScreen() {

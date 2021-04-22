@@ -140,8 +140,6 @@
 				// 如果没有对应的值，说明用户昵称的首字母是乱七八糟的字符或者数字或者表情
 				return enWords.length - 1;
 			}
-			
-			
 			// 显示通讯录
 			function showList() {
 				var list = document.getElementById('list');
@@ -216,8 +214,6 @@
 					
 				})
 			}
-			
-			
 			function fetchFriendList() {
 				var currentUser = utils.getCurrentUser();
 				mui.ajax(appConfig.serviceUrl + "/friendref/queryFriendList/" + currentUser.username,{
@@ -228,7 +224,6 @@
 					headers:{'Content-Type':'application/json'},	              
 					success:function(resp){
 						
-	
 						if (resp.code == 200) {
 							var friendList = resp.data.friendsRefVoList;
 							utils.setFriendList(friendList);

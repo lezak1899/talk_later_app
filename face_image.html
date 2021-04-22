@@ -18,7 +18,7 @@
 		
 		<div class="mui-content" style="height: 100%;">
 			<!-- 我的头像展示 -->
-			<img id="img_myface" src=""/>
+			<img id="img_myface" src="" width="450px" height="450px"/>
 			<!-- 大头像操作 -->
 			<canvas id='c'></canvas> 
 			<!-- 小头像操作 -->
@@ -126,11 +126,6 @@
 								
 								var wsWebview = plus.webview.getWebviewById("person_center.html");	
 								wsWebview.evalJS("location.reload()");
-								
-								
-								
-
-		
 								bottom.style.display="none";
 								utils.popUpToast("头像更换成功！");
 								

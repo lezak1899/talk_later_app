@@ -129,7 +129,7 @@
 						}
 					}
 					
-					
+				
 					plus.nativeUI.showWaiting("请稍等。。。");
 					//调用后端接口
 					mui.ajax(appConfig.serviceUrl+"/user/login",{
@@ -148,7 +148,7 @@
 							if(resp.code=="200"){
 								console.log("登录成功，状态码为："+resp.code)
 								utils.setCurrentUser(resp.data.currentUser);//将当前登录用户缓存起来
-								mui.openWindow("index.html","index.html");
+								mui.openWindow("index.html","index.html");				
 							}
 							else{
 								mui.alert("登录失败，"+resp.message);
@@ -163,14 +163,8 @@
 					});
 					//使原来form表单的提交失效
 					e.preventDefault();
-				})
-				
-				
-				
+				})	
 			})
-			
-			
-			
 		</script>
 
 	</body>

@@ -29,10 +29,10 @@
 				<input id="nickname" type="text" class="mui-input-clear verify" placeholder="请输入昵称">
 				</div>
 				
-				<div class="mui-input-row">
+<!-- 				<div class="mui-input-row">
 				    <label>个性签名</label>
 				    <input id="fun_signature" type="text" class="mui-input-clear verify" placeholder="请输入个性签名">
-				</div>
+				</div> -->
 				
 				<div class="mui-input-row" id="sex_selection">
 				    <label>性别</label>
@@ -101,14 +101,13 @@
 						if(!this.value || this.value.trim() == "") {
 							var label = this.previousElementSibling;
 							mui.alert(label.innerText + "不允许为空！");
-							flag=0;
+							verifyFlag=0;
 							return false;
 						}
 						
 					}); 
-					if(flag==0){
-						return false;
-					}
+					
+					
 					
 					if(password.value!=confirm_password.value){
 						var label = this.previousElementSibling;
