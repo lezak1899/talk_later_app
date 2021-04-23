@@ -44,6 +44,7 @@
 			mui.plusReady(function(){
 				//初始化CHAT模块
 				CHAT.init();
+				fetchFriendList();//因为渲染快照列表需要用到好友的信息，故这里先缓存好友信息
 				var currentUser = utils.getCurrentUser();
 				// 左滑删除聊天快照和记录
 				mui("#ul_chatSnapshot").on("tap", "#link_delChatRecord", function(e){
@@ -145,7 +146,10 @@
 					fetchUnReadMsg();
 					
 					//加载好友信息，并刷新好友列表
-					fetchFriendList();
+					// fetchFriendList();
+					
+					//刷新快照列表
+					loadingChatSnapshot();
 				
 					 // 定时发送心跳
 					// setInterval("CHAT.keepalive()", 10000);
@@ -300,8 +304,6 @@
 						if (resp.code == 200) {
 							var friendList = resp.data.friendsRefVoList;
 							utils.setFriendList(friendList);
-							//刷新快照列表
-							loadingChatSnapshot();
 						}
 					}
 				});
@@ -315,7 +317,7 @@
 				ul_chatSnapshot.innerHTML = "";
 				for (var i = 0 ; i < chatSnapshotList.length ; i++) {
 					var chatItem = chatSnapshotList[i];
-					if(chatItem==null) return false;
+					// if(chatItem==null) return false;
 					var friendUsername = chatItem.friendUsername;
 					// 根据friendId从本地联系人列表的缓存中拿到相关信息
 					var friend = utils.getFriendFromFriendList(friendUsername);

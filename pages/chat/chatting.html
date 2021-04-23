@@ -153,6 +153,11 @@
 					 * 7、重新调整窗口高度
 					 */ 
 					resizeScreen();
+					/**
+					 * 8、刷新快照列表
+					 */
+					var chat_list_Webview = plus.webview.getWebviewById("chat_list.html");
+					chat_list_Webview.evalJS("loadingChatSnapshot()");
 				
 				})
 				
